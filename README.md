@@ -25,3 +25,13 @@ However, I still have an interest in math and science,
 and for a while now I have thought about coding my own
 version of something like Desmos or Mathematica in terms
 of their plotting capabilities.
+
+## User Stories
+- As a user, I want to be able to add a math function
+to a list
+- As a user, I want to be able to plot the list of
+functions
+- As a user, I want to be able to get the value f(x) of
+the function at a certain point x
+- As a user, I want to be able to calculate the
+derivatives and integrals of the functions
