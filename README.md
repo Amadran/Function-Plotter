@@ -28,9 +28,9 @@ of their plotting capabilities.
 
 ## User Stories
 - As a user, I want to be able to add a math function
-to a list
+to my workspace
 - As a user, I want to be able to plot the list of
-functions
+functions in the workspace
 - As a user, I want to be able to get the value f(x) of
 the function at a certain point x
 - As a user, I want to be able to calculate the
