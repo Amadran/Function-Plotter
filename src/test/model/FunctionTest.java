@@ -96,9 +96,9 @@ class FunctionTest {
     @Test
     public void testConstructorLinear() {
         //initialization
-        helperConstructorInit("linear", -3.0, 3.0);
         testConst.put("a", 2.0);
         testConst.put("b", 1.5);
+        helperConstructorInit("linear", -3.0, 3.0);
         
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -110,12 +110,13 @@ class FunctionTest {
     @Test
     public void testConstructorPolynomial() {
         //initialization
-        helperConstructorInit("polynomial", -3.0, 3.0);
         testConst.put("a", -2.0);
         testConst.put("b", -2.0);
         testConst.put("c", 3.0);
         testConst.put("d", 2.5);
         testConst.put("e", -1.0);
+        testConst.put("f", 0.5);
+        helperConstructorInit("polynomial", -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -127,10 +128,10 @@ class FunctionTest {
     @Test
     public void testConstructorExponential() {
         //initialization
-        helperConstructorInit("exponential", -3.0, 3.0);
         testConst.put("a", 2.0);
         testConst.put("b", 2.0);
         testConst.put("c", 3.0);
+        helperConstructorInit("exponential", -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -142,7 +143,6 @@ class FunctionTest {
     @Test
     public void testConstructorTrigonometric() {
         //initialization
-        helperConstructorInit("trigonometric", -3.0, 3.0);
         testConst.put("a", 2.0);
         testConst.put("b", 2.0);
         testConst.put("c", -1.5);
@@ -150,6 +150,7 @@ class FunctionTest {
         testConst.put("e", 2.0);
         testConst.put("f", 2.0);
         testConst.put("g", 0.0);
+        helperConstructorInit("trigonometric", -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -161,10 +162,10 @@ class FunctionTest {
     @Test
     public void testConstructorLogarithmic() {
         //initialization
-        helperConstructorInit("logarithmic", -3.0, 3.0);
         testConst.put("a", 2.0);
         testConst.put("b", -2.0);
         testConst.put("c", 1.5);
+        helperConstructorInit("logarithmic", -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -173,13 +174,8 @@ class FunctionTest {
         helperConstructorCheck(func, -3.0, 3.0);
     }
 
-    //testEvalAtX initialization helper
-    public void helperTestEvalAtXInit() {
-
-    }
-
     @Test
-    public void testEvalAtXLinear() {
+    public void testEvalFunctionLinear() {
         testType = "linear";
         testDomain.add(-3.0);
         testDomain.add(3.0);
@@ -190,11 +186,11 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * x + testConst.get("b");
-        assertEquals(expectedY, func.evalAtX(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
     }
 
     @Test
-    public void testEvalAtXPolynomial() {
+    public void testEvalFunctionPolynomial() {
         testType = "polynomial";
         testDomain.add(-3.0);
         testDomain.add(3.0);
@@ -212,11 +208,11 @@ class FunctionTest {
         double expectedY = testConst.get("a") * x*x*x*x*x + testConst.get("b") * x*x*x*x
                          + testConst.get("c") * x*x*x + testConst.get("d") * x*x
                          + testConst.get("e") * x + testConst.get("f");
-        assertEquals(expectedY, func.evalAtX(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
     }
 
     @Test
-    public void testEvalAtXExponential() {
+    public void testEvalFunctionExponential() {
         testType = "exponential";
         testDomain.add(-3.0);
         testDomain.add(3.0);
@@ -228,11 +224,11 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * exp(testConst.get("b") * x) + testConst.get("c");
-        assertEquals(expectedY, func.evalAtX(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
     }
 
     @Test
-    public void testEvalAtXTrigonometric() {
+    public void testEvalFunctionTrigonometric() {
         testType = "trigonometric";
         testDomain.add(-3.0);
         testDomain.add(3.0);
@@ -251,12 +247,12 @@ class FunctionTest {
         double expectedY = testConst.get("a") * sin(testConst.get("b") * x)
                          + testConst.get("c") * cos(testConst.get("d") * x)
                          + testConst.get("e") * tan(testConst.get("f") * x) + testConst.get("g");
-        assertEquals(expectedY, func.evalAtX(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
     }
 
     @Test
-    public void testEvalAtXLogarithmic() {
-        testType = "trigonometric";
+    public void testEvalFunctionLogarithmic() {
+        testType = "logarithmic";
         testDomain.add(-3.0);
         testDomain.add(3.0);
         testConst.put("a", 1.5);
@@ -268,6 +264,6 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
-        assertEquals(expectedY, func.evalAtX(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
     }
 }

@@ -1,19 +1,23 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static java.lang.Double.NaN;
+import static java.lang.Math.*;
 
 
 // Function class represents an individual mathematical function, containing information
 // on it's definition and containing the capability to return x and y values
 public class Function {
-    public static final double DELTA = 1e-4; //want all functions to have same x-spacing
+    public static final double DELTA = 1e-4; //x-value spacing
 
     private String functionType;
     private HashMap<String, Double> constants;
     private List<Double> domain;
     private List<Double> valuesY;
-    private List<Double> valuesX; //calculated using domain and DELTA, stored for performance
+    private List<Double> valuesX; //calculated using domain and DELTA
 
     // REQUIRES: - type must be one of the following strings:
     //                  "linear" -> a*x + b,
@@ -22,40 +26,97 @@ public class Function {
     //                  "trigonometric" -> a*sin(b*x) + c*cos(d*x) + e*tan(f*x) + g,
     //                  "logarithmic" -> a*ln(b*x) + c
     //           - constants must be a HashMap of all constants in the function
-    //           - domainLeft < domainRight
+    //           - domainX must be a List where index 0 is left domain boundary, index 1 is right domain boundary
     //           - points in pointsX must be equally-spaced
     // MODIFIES: this
     // EFFECTS: creates a Function object with a function type specified, as well as its constants and domain;
     //          calculates valuesX and valuesY
-    public Function(String type, HashMap<String, Double> constants, List<Double> domainX) {
-        //stub
+    public Function(String type, HashMap<String, Double> funcConstants, List<Double> domainX) {
+        //initialize simple fields
+        functionType = type;
+        constants = funcConstants;
+        domain = domainX;
+        valuesX = new ArrayList<>();
+        valuesY = new ArrayList<>();
+
+        //generate x and y values
+        double i = domain.get(0);
+        while (i <= domain.get(1)) {
+            valuesX.add(i);
+            valuesY.add(evalFunction(i));
+            i += Function.DELTA;
+        }
     }
 
     // REQUIRES: x must be in the domain of the function
-    // EFFECTS: returns the function evaluated at x (i.e. returns f(x))
-    public double evalAtX(double x) {
-        return 0.0; //stub
+    // EFFECTS: returns the function evaluated at x (i.e. returns f(x)) by calling appropriate "eval" method
+    public double evalFunction(double x) {
+        switch (functionType) {
+            case "linear":
+                return evalLinear(x);
+            case "polynomial":
+                return evalPolynomial(x);
+            case "exponential":
+                return evalExponential(x);
+            case "trigonometric":
+                return evalTrigonometric(x);
+            case "logarithmic":
+                return evalLogarithmic(x);
+            default:
+                return NaN;
+        }
     }
 
     // ~~~~~~~~~~GETTERS~~~~~~~~~~~
 
+    // EFFECTS: returns functionType
     public String getFunctionType() {
         return functionType;
     }
 
+    // EFFECTS: returns constants
     public HashMap<String, Double> getConstants() {
         return constants;
     }
 
+    // EFFECTS: returns domain
     public List<Double> getDomain() {
         return domain;
     }
 
+    // EFFECTS: returns valuesX
     public List<Double> getValuesX() {
         return valuesX;
     }
 
+    // EFFECTS: returns valuesY
     public List<Double> getValuesY() {
         return valuesY;
+    }
+
+    // ~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~
+
+    private double evalLinear(double x) {
+        return constants.get("a") * x + constants.get("b");
+    }
+
+    private double evalPolynomial(double x) {
+        return constants.get("a") * x * x * x * x * x + constants.get("b") * x * x * x * x
+                + constants.get("c") * x * x * x + constants.get("d") * x * x
+                + constants.get("e") * x + constants.get("f");
+    }
+
+    private double evalExponential(double x) {
+        return constants.get("a") * exp(constants.get("b") * x) + constants.get("c");
+    }
+
+    private double evalTrigonometric(double x) {
+        return constants.get("a") * sin(constants.get("b") * x)
+                + constants.get("c") * cos(constants.get("d") * x)
+                + constants.get("e") * tan(constants.get("f") * x) + constants.get("g");
+    }
+
+    private double evalLogarithmic(double x) {
+        return constants.get("a") * log(constants.get("b") * x) + constants.get("c");
     }
 }
