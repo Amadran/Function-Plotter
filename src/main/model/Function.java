@@ -8,12 +8,17 @@ import static java.lang.Double.NaN;
 import static java.lang.Math.*;
 
 
-// Function class represents an individual mathematical function, containing information
+// Represents an individual mathematical function, containing information
 // on it's definition and containing the capability to return x and y values
 public class Function {
     public static final double DELTA = 1e-4; //x-value spacing
+    public static final String TYPE_LINEAR = "linear";
+    public static final String TYPE_POLY = "polynomial";
+    public static final String TYPE_EXP = "exponential";
+    public static final String TYPE_TRIG = "trigonometric";
+    public static final String TYPE_LOG = "logarithmic";
 
-    private String functionType;
+    private final String functionType;
     private HashMap<String, Double> constants;
     private List<Double> domain;
     private List<Double> valuesY;
@@ -52,15 +57,15 @@ public class Function {
     // EFFECTS: returns the function evaluated at x (i.e. returns f(x)) by calling appropriate "eval" method
     public double evalFunction(double x) {
         switch (functionType) {
-            case "linear":
+            case TYPE_LINEAR:
                 return evalLinear(x);
-            case "polynomial":
+            case TYPE_POLY:
                 return evalPolynomial(x);
-            case "exponential":
+            case TYPE_EXP:
                 return evalExponential(x);
-            case "trigonometric":
+            case TYPE_TRIG:
                 return evalTrigonometric(x);
-            case "logarithmic":
+            case TYPE_LOG:
                 return evalLogarithmic(x);
             default:
                 return NaN;

@@ -17,6 +17,9 @@ class FunctionTest {
     private HashMap<String, Double> testConst;
     private List<Double> testXVals;
     private List<Double> testYVals;
+    private final int MAX_NUM_CONSTANTS = 7;
+
+    private final String[] constantKeys = {"a","b","c","d","e","f","g"};
 
     @BeforeEach
     public void setup() {
@@ -24,6 +27,13 @@ class FunctionTest {
         testConst = new HashMap<>();
         testXVals = new ArrayList<>();
         testYVals = new ArrayList<>();
+    }
+
+    //constants helper
+    public void initConstants(double[] constants) {
+        for (int i = 0; i < constants.length; i++) {
+            testConst.put(constantKeys[i], constants[i]);
+        }
     }
 
     //constructor initialization helper (also generates function values to test)
@@ -41,13 +51,13 @@ class FunctionTest {
 
         //initialize y-values to test
         switch (funcType) {
-            case "linear":
+            case Function.TYPE_LINEAR:
                 for (Double x : testXVals) {
                     double y = testConst.get("a") * x + testConst.get("b");
                     testYVals.add(y);
                 }
                 break;
-            case "polynomial":
+            case Function.TYPE_POLY:
                 for (Double x : testXVals) {
                     double y = testConst.get("a") * x*x*x*x*x + testConst.get("b") * x*x*x*x
                              + testConst.get("c") * x*x*x + testConst.get("d") * x*x
@@ -55,13 +65,13 @@ class FunctionTest {
                     testYVals.add(y);
                 }
                 break;
-            case "exponential":
+            case Function.TYPE_EXP:
                 for (Double x : testXVals) {
                     double y = testConst.get("a") * exp(testConst.get("b") * x) + testConst.get("c");
                     testYVals.add(y);
                 }
                 break;
-            case "trigonometric":
+            case Function.TYPE_TRIG:
                 for (Double x : testXVals) {
                     double y = testConst.get("a") * sin(testConst.get("b") * x)
                              + testConst.get("c") * cos(testConst.get("d") * x)
@@ -69,7 +79,7 @@ class FunctionTest {
                     testYVals.add(y);
                 }
                 break;
-            case "logarithmic":
+            case Function.TYPE_LOG:
                 for (Double x : testXVals) {
                     double y = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
                     testYVals.add(y);
@@ -96,9 +106,9 @@ class FunctionTest {
     @Test
     public void testConstructorLinear() {
         //initialization
-        testConst.put("a", 2.0);
-        testConst.put("b", 1.5);
-        helperConstructorInit("linear", -3.0, 3.0);
+        double[] consts = {2.0, 1.5};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_LINEAR, -3.0, 3.0);
         
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -110,13 +120,9 @@ class FunctionTest {
     @Test
     public void testConstructorPolynomial() {
         //initialization
-        testConst.put("a", -2.0);
-        testConst.put("b", -2.0);
-        testConst.put("c", 3.0);
-        testConst.put("d", 2.5);
-        testConst.put("e", -1.0);
-        testConst.put("f", 0.5);
-        helperConstructorInit("polynomial", -3.0, 3.0);
+        double[] consts = {-2.0, -2.0, 3.0, 2.5, -1.0, 0.5};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_POLY, -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -128,10 +134,9 @@ class FunctionTest {
     @Test
     public void testConstructorExponential() {
         //initialization
-        testConst.put("a", 2.0);
-        testConst.put("b", 2.0);
-        testConst.put("c", 3.0);
-        helperConstructorInit("exponential", -3.0, 3.0);
+        double[] consts = {2.0, 2.0, 3.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -143,14 +148,9 @@ class FunctionTest {
     @Test
     public void testConstructorTrigonometric() {
         //initialization
-        testConst.put("a", 2.0);
-        testConst.put("b", 2.0);
-        testConst.put("c", -1.5);
-        testConst.put("d", -1.5);
-        testConst.put("e", 2.0);
-        testConst.put("f", 2.0);
-        testConst.put("g", 0.0);
-        helperConstructorInit("trigonometric", -3.0, 3.0);
+        double[] consts = {2.0, 2.0, -1.5, -1.5, 2.0, 2.0, 0.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_TRIG, -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -162,10 +162,9 @@ class FunctionTest {
     @Test
     public void testConstructorLogarithmic() {
         //initialization
-        testConst.put("a", 2.0);
-        testConst.put("b", -2.0);
-        testConst.put("c", 1.5);
-        helperConstructorInit("logarithmic", -3.0, 3.0);
+        double[] consts = {2.0, -2.0, 1.5};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_LOG, -3.0, 3.0);
 
         //test
         Function func = new Function(testType, testConst, testDomain);
@@ -176,11 +175,11 @@ class FunctionTest {
 
     @Test
     public void testEvalFunctionLinear() {
-        testType = "linear";
+        testType = Function.TYPE_LINEAR;
         testDomain.add(-3.0);
         testDomain.add(3.0);
-        testConst.put("a", 1.5);
-        testConst.put("b", -0.5);
+        double[] consts = {1.5, -0.5};
+        initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -191,16 +190,11 @@ class FunctionTest {
 
     @Test
     public void testEvalFunctionPolynomial() {
-        testType = "polynomial";
+        testType = Function.TYPE_POLY;
         testDomain.add(-3.0);
         testDomain.add(3.0);
-        testConst.put("a", 1.0);
-        testConst.put("b", -2.0);
-        testConst.put("c", 1.0);
-        testConst.put("d", 1.0);
-        testConst.put("e", -1.5);
-        testConst.put("f", 0.5);
-
+        double[] consts = {1.0, -2.0, 1.0, 1.0, -1.5, 0.5};
+        initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -213,12 +207,11 @@ class FunctionTest {
 
     @Test
     public void testEvalFunctionExponential() {
-        testType = "exponential";
+        testType = Function.TYPE_EXP;
         testDomain.add(-3.0);
         testDomain.add(3.0);
-        testConst.put("a", 0.5);
-        testConst.put("b", -2.5);
-        testConst.put("c", -0.5);
+        double[] consts = {0.5, -2.5, -0.5};
+        initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -229,17 +222,11 @@ class FunctionTest {
 
     @Test
     public void testEvalFunctionTrigonometric() {
-        testType = "trigonometric";
+        testType = Function.TYPE_TRIG;
         testDomain.add(-3.0);
         testDomain.add(3.0);
-        testConst.put("a", 0.5);
-        testConst.put("b", 1.5);
-        testConst.put("c", -0.5);
-        testConst.put("d", 2.0);
-        testConst.put("e", 0.5);
-        testConst.put("f", -2.5);
-        testConst.put("g", 0.0);
-
+        double[] consts = {0.5, 1.5, -0.5, 2.0, 0.5, -2.5, 0.0};
+        initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -252,13 +239,11 @@ class FunctionTest {
 
     @Test
     public void testEvalFunctionLogarithmic() {
-        testType = "logarithmic";
+        testType = Function.TYPE_LOG;
         testDomain.add(-3.0);
         testDomain.add(3.0);
-        testConst.put("a", 1.5);
-        testConst.put("b", 3.0);
-        testConst.put("c", -0.5);
-
+        double[] consts = {1.5, 3.0, -0.5};
+        initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
