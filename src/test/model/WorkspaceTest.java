@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class WorkspaceTest {
     private Workspace workspace;
 
-    private final String[] constantKeys = {"a","b","c","d","e","f","g"};
-
     @BeforeEach
     public void setup() {
         workspace = new Workspace();
@@ -107,7 +105,7 @@ public class WorkspaceTest {
     //constants helper
     public void helperInitConstants(double[] constArray, HashMap<String, Double> funcConstants) {
         for (int i = 0; i < constArray.length; i++) {
-            funcConstants.put(constantKeys[i], constArray[i]);
+            funcConstants.put(Function.CONSTANT_NAMES[i], constArray[i]);
         }
     }
 

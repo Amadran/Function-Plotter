@@ -2,8 +2,7 @@ package model;
 
 import java.util.HashMap;
 
-// Represents the "workspace" of the program, where all of the function objects will
-// reside, and can be acted on by other classes
+// Represents the "workspace" of the program, where all of the function objects will reside
 public class Workspace {
     private HashMap<String, Function> functionList;
 
@@ -34,6 +33,11 @@ public class Workspace {
         } else {
             return null;
         }
+    }
+
+    //EFFECTS: returns the list of functions
+    public HashMap<String, Function> getFunctionList() {
+        return functionList;
     }
 
     // EFFECTS: returns length of functionList

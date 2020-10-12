@@ -17,7 +17,6 @@ class FunctionTest {
     private HashMap<String, Double> testConst;
     private List<Double> testXVals;
     private List<Double> testYVals;
-    private final int MAX_NUM_CONSTANTS = 7;
 
     private final String[] constantKeys = {"a","b","c","d","e","f","g"};
 
@@ -90,16 +89,16 @@ class FunctionTest {
     //constructor checking helper
     public void helperConstructorCheck(Function f, double left, double right) {
         assertEquals(testType, f.getFunctionType());
-        assertEquals(testDomain.get(0), f.getDomain().get(0), Function.DELTA / 10.0);
-        assertEquals(testDomain.get(1), f.getDomain().get(1), Function.DELTA / 10.0);
+        assertEquals(testDomain.get(0), f.getDomain().get(0), Function.DELTA / 100.0);
+        assertEquals(testDomain.get(1), f.getDomain().get(1), Function.DELTA / 100.0);
         for (Map.Entry<String, Double> c : testConst.entrySet()) {
-            assertEquals(c.getValue(), f.getConstants().get(c.getKey()), Function.DELTA / 10.0);
+            assertEquals(c.getValue(), f.getConstants().get(c.getKey()), Function.DELTA / 100.0);
         }
         for (int i = 0; i < testXVals.size(); i++) {
-            assertEquals(testXVals.get(i), f.getValuesX().get(i), Function.DELTA / 10.0);
+            assertEquals(testXVals.get(i), f.getValuesX().get(i), Function.DELTA / 100.0);
         }
         for (int i = 0; i < testYVals.size(); i++) {
-            assertEquals(testYVals.get(i), f.getValuesY().get(i), Function.DELTA / 10.0);
+            assertEquals(testYVals.get(i), f.getValuesY().get(i), Function.DELTA / 100.0);
         }
     }
 
@@ -185,7 +184,7 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * x + testConst.get("b");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
     }
 
     @Test
@@ -202,7 +201,7 @@ class FunctionTest {
         double expectedY = testConst.get("a") * x*x*x*x*x + testConst.get("b") * x*x*x*x
                          + testConst.get("c") * x*x*x + testConst.get("d") * x*x
                          + testConst.get("e") * x + testConst.get("f");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
     }
 
     @Test
@@ -217,7 +216,7 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * exp(testConst.get("b") * x) + testConst.get("c");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
     }
 
     @Test
@@ -234,7 +233,7 @@ class FunctionTest {
         double expectedY = testConst.get("a") * sin(testConst.get("b") * x)
                          + testConst.get("c") * cos(testConst.get("d") * x)
                          + testConst.get("e") * tan(testConst.get("f") * x) + testConst.get("g");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
     }
 
     @Test
@@ -249,6 +248,6 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 10.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
     }
 }

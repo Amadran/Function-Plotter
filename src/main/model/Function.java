@@ -11,12 +11,13 @@ import static java.lang.Math.*;
 // Represents an individual mathematical function, containing information
 // on it's definition and containing the capability to return x and y values
 public class Function {
-    public static final double DELTA = 1e-4; //x-value spacing
+    public static final double DELTA = 0.5; //x-value spacing
     public static final String TYPE_LINEAR = "linear";
     public static final String TYPE_POLY = "polynomial";
     public static final String TYPE_EXP = "exponential";
     public static final String TYPE_TRIG = "trigonometric";
     public static final String TYPE_LOG = "logarithmic";
+    public static final String[] CONSTANT_NAMES = {"a","b","c","d","e","f","g"};
 
     private final String functionType;
     private HashMap<String, Double> constants;
