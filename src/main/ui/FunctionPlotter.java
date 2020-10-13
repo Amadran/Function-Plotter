@@ -40,6 +40,7 @@ public class FunctionPlotter {
         NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_LOG, 3);
     }
 
+    // MODIFIES: this
     // EFFECTS: starts the program interface
     private void startUserInterface() {
         System.out.println("~~~Mathematical Function Plotter~~~");
@@ -67,12 +68,14 @@ public class FunctionPlotter {
     private void mainMenu() {
         while (true) {
             System.out.println("\n1 - Add a function to '" + activeWorkspaceName + "' (current workspace)\n"
-                    + "2 - Show functions\n3 - Change workspaces\n4 - Rename current workspace\n"
-                    + "5 - Delete a workspace\n6 - Quit Program");
+                    + "2 - Show functions\n3 - Evaluate a function at a particular value (current workspace)\n"
+                    + "4 - Change workspaces\n5 - Rename a workspace\n"
+                    + "6 - Delete a workspace\n7 - Quit Program");
             processMainMenuInput(input.nextLine());
         }
     }
 
+    // MODIFIES: this
     // EFFECTS: processes input from main menu (exits program in the case "quit" is selected)
     private void processMainMenuInput(String menuInput) {
         switch (menuInput) {
@@ -83,15 +86,27 @@ public class FunctionPlotter {
                 outputFunctions();
                 break;
             case "3":
-                changeActiveWorkspace();
+                evaluateFunctionAtX();
                 break;
             case "4":
+                changeActiveWorkspace();
+                break;
+            default:
+                processMainMenuInputContinue(menuInput);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: processes input from main menu (continuation of switch statement in first method)
+    private void processMainMenuInputContinue(String menuInput) {
+        switch (menuInput) {
+            case "5":
                 renameWorkspace();
                 break;
-            case "5":
+            case "6":
                 deleteWorkspace();
                 break;
-            case "6":
+            case "7":
                 System.exit(0);
             default:
                 System.out.println(ERROR_INPUT_GENERIC);
@@ -204,7 +219,7 @@ public class FunctionPlotter {
         ArrayList<Function> funcArray = new ArrayList<>(activeWorkspaceFuncList.values());
 
         if (funcArray.size() == 0) {
-            System.out.println("Workspace is empty, create some functions first");
+            System.out.println("Workspace is empty, must create at least one function");
         } else {
             for (int i = 0; i < funcArray.size(); i++) {
                 Function func = funcArray.get(i);
@@ -219,6 +234,44 @@ public class FunctionPlotter {
     }
 
     // MODIFIES: this
+    // EFFECTS: processes input to select and evaluate a certain function of the currently active workspace
+    private void evaluateFunctionAtX() {
+        Workspace activeWorkspace = workspaceList.get(activeWorkspaceName);
+        ArrayList<String> functionNames = new ArrayList<>(activeWorkspace.getFunctionList().keySet());
+        ArrayList<Function> functionList = new ArrayList<>(activeWorkspace.getFunctionList().values());
+
+        while (true) {
+            if (functionList.size() == 0) {
+                System.out.println("Function list is empty for this workspace, create at least one function");
+                break;
+            }
+
+            int selection = evalAtXHelper(functionNames);
+            if (selection == -1) {
+                break;
+            } else if (selection <= functionNames.size()) {
+                System.out.println("Input a value for x: ");
+                double x = input.nextDouble();
+                input.nextLine();
+                System.out.println(functionNames.get(selection - 1) + "(x) = "
+                        + functionList.get(selection - 1).evalFunction(x));
+                break;
+            } else {
+                System.out.println(ERROR_INPUT_GENERIC);
+            }
+        }
+    }
+
+    // REQUIRES: functionNames must be the list returned by activeWorkspace.getFunctionList().keySet()'s iterator
+    // MODIFIES: this
+    // EFFECTS: evaluateAtFunctionX helper (prints out list of options and returns selection)
+    private int evalAtXHelper(ArrayList<String> functionNames) {
+        System.out.println("Select a function to evaluate: ");
+        System.out.println("-1 - Go back to main menu");
+        return makeListSelection(functionNames);
+    }
+
+    // MODIFIES: this
     // EFFECTS: changes the currently active workspace
     private void changeActiveWorkspace() {
         //put all workspace names (keys of workspaceList HashMap) into easily index-able ArrayList
@@ -228,7 +281,7 @@ public class FunctionPlotter {
             System.out.println("Select a workspace: ");
             System.out.println("-1 - Go back to main menu");
             System.out.println("0 - Create a new workspace");
-            int selection = selectWorkspace(workspaceNames);
+            int selection = makeListSelection(workspaceNames);
 
             if (selection == -1) {
                 break;
@@ -253,7 +306,7 @@ public class FunctionPlotter {
         while (true) {
             System.out.println("Select a workspace to delete: ");
             System.out.println("-1 - Go back to main menu");
-            int selection = selectWorkspace(workspaceNames);
+            int selection = makeListSelection(workspaceNames);
 
             if (selection == -1) {
                 break;
@@ -285,7 +338,7 @@ public class FunctionPlotter {
         while (true) {
             System.out.println("Select a workspace to rename: ");
             System.out.println("-1 - Go back to main menu");
-            int selection = selectWorkspace(workspaceNames);
+            int selection = makeListSelection(workspaceNames);
 
             if (selection == -1) {
                 break;
@@ -302,14 +355,13 @@ public class FunctionPlotter {
         }
     }
 
-    // REQUIRES: list must contain existing workspace names
     // MODIFIES: this
-    // EFFECTS: returns the selection of a particular workspace in workspaceList
-    private int selectWorkspace(ArrayList<String> workspaceNames) {
-        //print out all workspace names in same order as in the ArrayList, to facilitate selection
+    // EFFECTS: returns the selection of a particular object (workspace, function in active workspace, etc.)
+    private int makeListSelection(ArrayList<String> namesList) {
+        //print out all names (e.g. workspaces, functions in active workspace)
         int i = 0;
-        for (String workspaceName : workspaceNames) {
-            System.out.println(i + 1 + " - " + workspaceName);
+        for (String name : namesList) {
+            System.out.println(i + 1 + " - " + name);
             i++;
         }
 
@@ -321,4 +373,41 @@ public class FunctionPlotter {
         input.nextLine();
         return selection;
     }
+
+//    // REQUIRES: list must contain existing workspace names
+//    // MODIFIES: this
+//    // EFFECTS: returns the selection of a particular workspace in workspaceList
+//    private int selectWorkspace(ArrayList<String> workspaceNames) {
+//        //print out all workspace names in same order as in the ArrayList, to facilitate selection
+//        int i = 0;
+//        for (String workspaceName : workspaceNames) {
+//            System.out.println(i + 1 + " - " + workspaceName);
+//            i++;
+//        }
+//
+//        //return int selection of input
+//        //***nextInt() leaves the trailing \n, which eats into the next nextLine() call,
+//        //***so after every nextInt() call a nextLine() call must be placed
+//        //***(https://stackoverflow.com/questions/13102045/scanner-is-skipping-nextline-after-using-next-or-nextfoo)
+//        int selection = input.nextInt();
+//        input.nextLine();
+//        return selection;
+//    }
+//
+//    // REQUIRES: list must contain existing function names in active workspace
+//    // MODIFIES: this
+//    // EFFECTS: returns the selection of a particular function in active workspace's functionList
+//    private int selectFunction(ArrayList<String> functionNames) {
+//        //print out all function names in same order as in the ArrayList, to facilitate selection
+//        int i = 0;
+//        for (String functionName : functionNames) {
+//            System.out.println(i + 1 + " - " + functionName);
+//            i++;
+//        }
+//
+//        //return int selection of input
+//        int selection = input.nextInt();
+//        input.nextLine();
+//        return selection;
+//    }
 }
