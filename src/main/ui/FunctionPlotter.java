@@ -7,26 +7,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-//interface for function plotting program, which contains a list of all workspaces and
-//handles input for the creation, deletion, renaming, and switching of them, as well as
-//handling input for the definition of functions for a selected workspace
+//interface for function plotting program, which uses the methods available to Workspace and Function
+//to output their respective information
 public class FunctionPlotter {
     // number of constants that the UI should wait for when processInputDefineFunction is running,
     // since it is different for each function type
     private static final HashMap<String, Integer> NUMBER_OF_CONSTANTS_FOR_TYPE = new HashMap<>();
     private static final String ERROR_INPUT_GENERIC = "Please enter an appropriate command";
     private static final String ERROR_INPUT_DOMAIN_BOUNDARY = "Left boundary must be less than right boundary";
+    private static final String ERROR_INPUT_EMPTY_WORKSPACE = "Workspace is empty, must create at least one function";
 
-    private HashMap<String, Workspace> workspaceList; //entries consist of (workspaceName, workspace object) pairs
-    private String activeWorkspaceName;
+    private Workspace workspace;
     private Scanner input;
 
-    // EFFECTS: initializes Scanner object
+    // EFFECTS: initializes workspace (Workspace object), input (Scanner object), and
+    //          NUMBER_OF_CONSTANTS_FOR_TYPE, as well as starting the user interface
     public FunctionPlotter() {
         initNumberOfConstantsForType();
-        workspaceList = new HashMap<>();
+        workspace = new Workspace();
         input = new Scanner(System.in);
-        startUserInterface(); //start the user interface
+        startUserInterface();
     }
 
     // MODIFIES: this
@@ -45,32 +45,16 @@ public class FunctionPlotter {
     private void startUserInterface() {
         System.out.println("~~~Mathematical Function Plotter~~~");
         System.out.println("~~~CPSC 210 Term Project by Adrian Pikor~~~\n");
-
-        while (true) {
-            if (workspaceList.size() == 0) {
-                createWorkspace();
-            } else {
-                mainMenu();
-            }
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: processes input to create a new workspace
-    private void createWorkspace() {
-        System.out.println("Enter a name for the new workspace: ");
-        activeWorkspaceName = input.nextLine();
-        workspaceList.put(activeWorkspaceName, new Workspace());
+        mainMenu();
     }
 
     // MODIFIES: this
     // EFFECTS: shows the main menu with numeric options
     private void mainMenu() {
         while (true) {
-            System.out.println("\n1 - Add a function to '" + activeWorkspaceName + "' (current workspace)\n"
-                    + "2 - Show functions\n3 - Evaluate a function at a particular value (current workspace)\n"
-                    + "4 - Change workspaces\n5 - Rename a workspace\n"
-                    + "6 - Delete a workspace\n7 - Quit Program");
+            System.out.println("\n1 - Add a function to the workspace\n2 - Show functions\n"
+                    + "3 - Evaluate a function at a particular value\n4 - Delete a function from the workspace\n"
+                    + "5 - Quit Program");
             processMainMenuInput(input.nextLine());
         }
     }
@@ -86,38 +70,22 @@ public class FunctionPlotter {
                 outputFunctions();
                 break;
             case "3":
-                evaluateFunctionAtX();
+                evaluateFunction();
                 break;
             case "4":
-                changeActiveWorkspace();
+                deleteFunction();
                 break;
-            default:
-                processMainMenuInputContinue(menuInput);
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: processes input from main menu (continuation of switch statement in first method)
-    private void processMainMenuInputContinue(String menuInput) {
-        switch (menuInput) {
             case "5":
-                renameWorkspace();
-                break;
-            case "6":
-                deleteWorkspace();
-                break;
-            case "7":
                 System.exit(0);
+                break;
             default:
                 System.out.println(ERROR_INPUT_GENERIC);
         }
     }
 
     // MODIFIES: this
-    // EFFECTS: processes input to create a new function and add it to the currently active workspace
+    // EFFECTS: processes input to create a new function and adds it to the workspace
     private void createNewFunction() {
-        Workspace activeWorkspace = workspaceList.get(activeWorkspaceName);
-
         while (true) {
             String name = defineFunctionName();
             String type = defineFunctionType();
@@ -125,7 +93,7 @@ public class FunctionPlotter {
             HashMap<String, Double> constants = defineFunctionConstants(type);
 
             if (type != null && domain != null) {
-                activeWorkspace.addFunction(new Function(type, constants, domain), name);
+                workspace.addFunction(new Function(type, constants, domain), name);
                 break;
             }
         }
@@ -212,14 +180,14 @@ public class FunctionPlotter {
 
 
     // EFFECTS: outputs information related to each Function object in the list
-    //          of functions of the currently active workspace
+    //          of functions in the workspace
     private void outputFunctions() {
-        HashMap<String, Function> activeWorkspaceFuncList = workspaceList.get(activeWorkspaceName).getFunctionList();
-        ArrayList<String> funcNames = new ArrayList<>(activeWorkspaceFuncList.keySet());
-        ArrayList<Function> funcArray = new ArrayList<>(activeWorkspaceFuncList.values());
+        HashMap<String, Function> functionList = workspace.getFunctionList();
+        ArrayList<String> funcNames = new ArrayList<>(functionList.keySet());
+        ArrayList<Function> funcArray = new ArrayList<>(functionList.values());
 
         if (funcArray.size() == 0) {
-            System.out.println("Workspace is empty, must create at least one function");
+            System.out.println(ERROR_INPUT_EMPTY_WORKSPACE);
         } else {
             for (int i = 0; i < funcArray.size(); i++) {
                 Function func = funcArray.get(i);
@@ -234,27 +202,29 @@ public class FunctionPlotter {
     }
 
     // MODIFIES: this
-    // EFFECTS: processes input to select and evaluate a certain function of the currently active workspace
-    private void evaluateFunctionAtX() {
-        Workspace activeWorkspace = workspaceList.get(activeWorkspaceName);
-        ArrayList<String> functionNames = new ArrayList<>(activeWorkspace.getFunctionList().keySet());
-        ArrayList<Function> functionList = new ArrayList<>(activeWorkspace.getFunctionList().values());
+    // EFFECTS: processes input to select and evaluate a certain function of the workspace
+    private void evaluateFunction() {
+        ArrayList<String> funcNames = new ArrayList<>(workspace.getFunctionList().keySet());
+        ArrayList<Function> funcArray = new ArrayList<>(workspace.getFunctionList().values());
 
         while (true) {
-            if (functionList.size() == 0) {
-                System.out.println("Function list is empty for this workspace, create at least one function");
+            if (funcArray.size() == 0) {
+                System.out.println(ERROR_INPUT_EMPTY_WORKSPACE);
                 break;
             }
 
-            int selection = evalAtXHelper(functionNames);
+            System.out.println("Select a function to evaluate: ");
+            System.out.println("-1 - Go back to main menu");
+            int selection = makeListSelection(funcNames);
+
             if (selection == -1) {
                 break;
-            } else if (selection <= functionNames.size()) {
+            } else if (selection <= funcNames.size()) {
                 System.out.println("Input a value for x: ");
                 double x = input.nextDouble();
                 input.nextLine();
-                System.out.println(functionNames.get(selection - 1) + "(x) = "
-                        + functionList.get(selection - 1).evalFunction(x));
+                System.out.println(funcNames.get(selection - 1) + "(x) = "
+                        + funcArray.get(selection - 1).evalFunction(x));
                 break;
             } else {
                 System.out.println(ERROR_INPUT_GENERIC);
@@ -262,34 +232,26 @@ public class FunctionPlotter {
         }
     }
 
-    // REQUIRES: functionNames must be the list returned by activeWorkspace.getFunctionList().keySet()'s iterator
     // MODIFIES: this
-    // EFFECTS: evaluateAtFunctionX helper (prints out list of options and returns selection)
-    private int evalAtXHelper(ArrayList<String> functionNames) {
-        System.out.println("Select a function to evaluate: ");
-        System.out.println("-1 - Go back to main menu");
-        return makeListSelection(functionNames);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: changes the currently active workspace
-    private void changeActiveWorkspace() {
-        //put all workspace names (keys of workspaceList HashMap) into easily index-able ArrayList
-        ArrayList<String> workspaceNames = new ArrayList<>(workspaceList.keySet());
+    // EFFECTS: processes input to select and remove function (after confirmation; see confirmDeleteFunction)
+    private void deleteFunction() {
+        ArrayList<String> funcNames = new ArrayList<>(workspace.getFunctionList().keySet());
+        ArrayList<Function> funcArray = new ArrayList<>(workspace.getFunctionList().values());
 
         while (true) {
-            System.out.println("Select a workspace: ");
+            if (funcArray.size() == 0) {
+                System.out.println(ERROR_INPUT_EMPTY_WORKSPACE);
+                break;
+            }
+
+            System.out.println("Select a function to delete: ");
             System.out.println("-1 - Go back to main menu");
-            System.out.println("0 - Create a new workspace");
-            int selection = makeListSelection(workspaceNames);
+            int selection = makeListSelection(funcNames);
 
             if (selection == -1) {
                 break;
-            } else if (selection == 0) {
-                createWorkspace();
-                break;
-            } else if (selection <= workspaceNames.size()) {
-                activeWorkspaceName = workspaceNames.get(selection - 1);
+            } else if (selection >= 1 && selection <= funcNames.size()) {
+                confirmDeleteFunction(funcNames.get(selection - 1));
                 break;
             } else {
                 System.out.println(ERROR_INPUT_GENERIC);
@@ -297,30 +259,20 @@ public class FunctionPlotter {
         }
     }
 
+    // REQUIRES: funcName is an existing function selected for deletion
     // MODIFIES: this
-    // EFFECTS: deletes the selected workspace
-    private void deleteWorkspace() {
-        //put all workspace names (keys of workspaceList HashMap) into easily index-able ArrayList
-        ArrayList<String> workspaceNames = new ArrayList<>(workspaceList.keySet());
-
+    // EFFECTS: confirms removal of selected function in workspace, removes function if yes is selected,
+    //          otherwise does nothing
+    private void confirmDeleteFunction(String funcName) {
         while (true) {
-            System.out.println("Select a workspace to delete: ");
-            System.out.println("-1 - Go back to main menu");
-            int selection = makeListSelection(workspaceNames);
+            System.out.println("Are you sure you want to delete this function from the workspace?");
+            System.out.println("1 - Yes\n2 - No");
+            String confirmation = input.nextLine();
 
-            if (selection == -1) {
+            if (confirmation.equals("1")) {
+                workspace.removeFunction(funcName);
                 break;
-            } else if (selection <= workspaceNames.size()) {
-                String workspaceToDelete = workspaceNames.get(selection - 1);
-                workspaceList.remove(workspaceToDelete);
-                workspaceNames.remove(selection - 1);
-
-                //prompt creation of new workspace if the only one was deleted
-                if (workspaceList.size() == 0) {
-                    createWorkspace();
-                } else {
-                    activeWorkspaceName = workspaceNames.get(0); //set active to first in list
-                }
+            } else if (confirmation.equals("2")) {
                 break;
             } else {
                 System.out.println(ERROR_INPUT_GENERIC);
@@ -329,34 +281,7 @@ public class FunctionPlotter {
     }
 
     // MODIFIES: this
-    // EFFECTS: renames the selected workspace
-    private void renameWorkspace() {
-        //put all workspace names (keys of workspaceList HashMap) into easily index-able ArrayList
-        ArrayList<String> workspaceNames = new ArrayList<>(workspaceList.keySet());
-        Workspace activeWorkspace = workspaceList.get(activeWorkspaceName);
-
-        while (true) {
-            System.out.println("Select a workspace to rename: ");
-            System.out.println("-1 - Go back to main menu");
-            int selection = makeListSelection(workspaceNames);
-
-            if (selection == -1) {
-                break;
-            } else if (selection <= workspaceNames.size()) {
-                System.out.println("Enter a new name for the workspace: ");
-                String newWorkspaceName = input.nextLine();
-                workspaceList.remove(activeWorkspaceName);
-                activeWorkspaceName = newWorkspaceName;
-                workspaceList.put(activeWorkspaceName, activeWorkspace);
-                break;
-            } else {
-                System.out.println(ERROR_INPUT_GENERIC);
-            }
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: returns the selection of a particular object (workspace, function in active workspace, etc.)
+    // EFFECTS: returns the selection of a particular object (e.g. a Function object inside a workspace)
     private int makeListSelection(ArrayList<String> namesList) {
         //print out all names (e.g. workspaces, functions in active workspace)
         int i = 0;
@@ -373,41 +298,4 @@ public class FunctionPlotter {
         input.nextLine();
         return selection;
     }
-
-//    // REQUIRES: list must contain existing workspace names
-//    // MODIFIES: this
-//    // EFFECTS: returns the selection of a particular workspace in workspaceList
-//    private int selectWorkspace(ArrayList<String> workspaceNames) {
-//        //print out all workspace names in same order as in the ArrayList, to facilitate selection
-//        int i = 0;
-//        for (String workspaceName : workspaceNames) {
-//            System.out.println(i + 1 + " - " + workspaceName);
-//            i++;
-//        }
-//
-//        //return int selection of input
-//        //***nextInt() leaves the trailing \n, which eats into the next nextLine() call,
-//        //***so after every nextInt() call a nextLine() call must be placed
-//        //***(https://stackoverflow.com/questions/13102045/scanner-is-skipping-nextline-after-using-next-or-nextfoo)
-//        int selection = input.nextInt();
-//        input.nextLine();
-//        return selection;
-//    }
-//
-//    // REQUIRES: list must contain existing function names in active workspace
-//    // MODIFIES: this
-//    // EFFECTS: returns the selection of a particular function in active workspace's functionList
-//    private int selectFunction(ArrayList<String> functionNames) {
-//        //print out all function names in same order as in the ArrayList, to facilitate selection
-//        int i = 0;
-//        for (String functionName : functionNames) {
-//            System.out.println(i + 1 + " - " + functionName);
-//            i++;
-//        }
-//
-//        //return int selection of input
-//        int selection = input.nextInt();
-//        input.nextLine();
-//        return selection;
-//    }
 }

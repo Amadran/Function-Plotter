@@ -20,13 +20,11 @@ about coding my own version of something like Desmos or
 Mathematica in terms of their plotting capabilities.
 
 ## User Stories
-- As a user, I want to be able to define and add a math
-function to my workspace
-- As a user, I want to be able to create multiple
-workspaces
-- As a user, I want to be able to rename and delete
-workspaces
-- As a user, I want to be able to plot the list of
+- As a user, I want to be able to define and add math
+functions to my workspace
+- As a user, I want to be able delete a function from my
+workspace
+- As a user, I want to be able to output the list of
 functions in a certain workspace
 - As a user, I want to be able to calculate the output of
 a function with a particular input

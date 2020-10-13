@@ -58,6 +58,11 @@ public class WorkspaceTest {
         assertEquals(func1, workspace.getFunction(funcName1));
         assertEquals(func2, workspace.getFunction(funcName2));
         assertEquals(func3, workspace.getFunction(funcName3));
+
+        //check getFunctionList() explicitly, since it is not used anywhere
+        Function[] funcArray = {func1, func2, func3};
+        String[] funcNames = {funcName1, funcName2, funcName3};
+        helperGetFunctionList(funcArray, funcNames);
     }
 
     @Test
@@ -123,5 +128,27 @@ public class WorkspaceTest {
         workspace.addFunction(func, name);
 
         return func; //in order to use it in test method
+    }
+
+    //helper to test getFunctionList() inside testAddFunctionMultiple() test (since it is not tested implicitly)
+    public void helperGetFunctionList(Function[] funcArray, String[] funcNames) {
+        //initialize expected values
+        HashMap<String, Function> expectedFunctions = new HashMap<>();
+        expectedFunctions.put(funcNames[0], funcArray[0]);
+        expectedFunctions.put(funcNames[1], funcArray[1]);
+        expectedFunctions.put(funcNames[2], funcArray[2]);
+
+        //return actual values to test
+        HashMap<String, Function> actualFunctions = workspace.getFunctionList();
+        ArrayList<String> actualFunctionNames = new ArrayList<>(actualFunctions.keySet());
+        ArrayList<Function> actualFunctionList = new ArrayList<>(actualFunctions.values());
+
+        //check names and Function objects
+        int i = 0;
+        for (String expectedFuncName : expectedFunctions.keySet()) {
+            assertEquals(expectedFuncName, actualFunctionNames.get(i));
+            i++;
+        }
+        assertEquals(expectedFunctions, actualFunctions);
     }
 }
