@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
+import static java.lang.Double.NaN;
 import static java.lang.Math.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -248,6 +249,21 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+    }
+
+    @Test
+    public void testEvalFunctionNAN() {
+        testType = "not a function type";
+        testDomain.add(-3.0);
+        testDomain.add(3.0);
+        double[] consts = {1.5, 3.0, -0.5};
+        initConstants(consts);
+
+        Function func = new Function(testType, testConst, testDomain);
+
+        double x = 0.7389;
+        double expectedY = NaN;
         assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
     }
 }
