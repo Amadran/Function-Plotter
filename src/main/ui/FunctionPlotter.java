@@ -20,6 +20,7 @@ public class FunctionPlotter {
     private Workspace workspace;
     private Scanner input;
 
+    // MODIFIES: this, Function
     // EFFECTS: initializes workspace (Workspace object), input (Scanner object), and
     //          NUMBER_OF_CONSTANTS_FOR_TYPE, as well as starting the user interface
     public FunctionPlotter() {
@@ -40,7 +41,7 @@ public class FunctionPlotter {
         NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_LOG, 3);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, Function, Workspace
     // EFFECTS: starts the program interface
     private void startUserInterface() {
         System.out.println("~~~Mathematical Function Plotter~~~");
@@ -48,19 +49,19 @@ public class FunctionPlotter {
         mainMenu();
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, Function, Workspace
     // EFFECTS: shows the main menu with numeric options
     private void mainMenu() {
         while (true) {
-            System.out.println("\n1 - Add a function to the workspace\n2 - Show functions\n"
+            System.out.println("\n1 - Add a function to the workspace\n2 - Show function descriptions and outputs\n"
                     + "3 - Evaluate a function at a particular value\n4 - Delete a function from the workspace\n"
                     + "5 - Quit Program");
             processMainMenuInput(input.nextLine());
         }
     }
 
-    // MODIFIES: this
-    // EFFECTS: processes input from main menu (exits program in the case "quit" is selected)
+    // MODIFIES: this, Function, Workspace
+    // EFFECTS: processes input from main menu
     private void processMainMenuInput(String menuInput) {
         switch (menuInput) {
             case "1":
@@ -76,14 +77,14 @@ public class FunctionPlotter {
                 deleteFunction();
                 break;
             case "5":
-                System.exit(0);
+                System.exit(0); //quit condition
                 break;
             default:
                 System.out.println(ERROR_INPUT_GENERIC);
         }
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, Function, Workspace
     // EFFECTS: processes input to create a new function and adds it to the workspace
     private void createNewFunction() {
         while (true) {
@@ -99,7 +100,8 @@ public class FunctionPlotter {
         }
     }
 
-    // EFFECTS: converts type integer into appropriate Function type string
+    // EFFECTS: converts selection into appropriate Function type string
+    //          (used in defineFunctionType())
     private String convertToTypeString(String type) {
         switch (type) {
             case "1":
@@ -232,7 +234,7 @@ public class FunctionPlotter {
         }
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, Function, Workspace
     // EFFECTS: processes input to select and remove function (after confirmation; see confirmDeleteFunction)
     private void deleteFunction() {
         ArrayList<String> funcNames = new ArrayList<>(workspace.getFunctionList().keySet());
@@ -259,8 +261,8 @@ public class FunctionPlotter {
         }
     }
 
-    // REQUIRES: funcName is an existing function selected for deletion
-    // MODIFIES: this
+    // REQUIRES: Function of name funcName exists in workspace
+    // MODIFIES: this, Workspace, Function
     // EFFECTS: confirms removal of selected function in workspace, removes function if yes is selected,
     //          otherwise does nothing
     private void confirmDeleteFunction(String funcName) {

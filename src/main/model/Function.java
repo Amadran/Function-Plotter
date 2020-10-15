@@ -31,6 +31,7 @@ public class Function {
     //                  "exponential" -> a*e^(b*x) + c,
     //                  "trigonometric" -> a*sin(b*x) + c*cos(d*x) + e*tan(f*x) + g,
     //                  "logarithmic" -> a*ln(b*x) + c
+    //                  ***see the constant TYPE's above
     //           - constants must be a HashMap of all constants in the function
     //           - domainX must be a List where index 0 is left domain boundary, index 1 is right domain boundary
     //           - points in pointsX must be equally-spaced
@@ -102,26 +103,36 @@ public class Function {
 
     // ~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~
 
+    // REQUIRES: x must be in the domain of the function
+    // EFFECTS: evaluates a function defined by the type TYPE_LINEAR
     private double evalLinear(double x) {
         return constants.get("a") * x + constants.get("b");
     }
 
+    // REQUIRES: x must be in the domain of the function
+    // EFFECTS: evaluates a function defined by the type TYPE_POLY
     private double evalPolynomial(double x) {
         return constants.get("a") * x * x * x * x * x + constants.get("b") * x * x * x * x
                 + constants.get("c") * x * x * x + constants.get("d") * x * x
                 + constants.get("e") * x + constants.get("f");
     }
 
+    // REQUIRES: x must be in the domain of the function
+    // EFFECTS: evaluates a function defined by the type TYPE_EXP
     private double evalExponential(double x) {
         return constants.get("a") * exp(constants.get("b") * x) + constants.get("c");
     }
 
+    // REQUIRES: x must be in the domain of the function
+    // EFFECTS: evaluates a function defined by the type TYPE_TRIG
     private double evalTrigonometric(double x) {
         return constants.get("a") * sin(constants.get("b") * x)
                 + constants.get("c") * cos(constants.get("d") * x)
                 + constants.get("e") * tan(constants.get("f") * x) + constants.get("g");
     }
 
+    // REQUIRES: x must be in the domain of the function
+    // EFFECTS: evaluates a function defined by the type TYPE_LOG
     private double evalLogarithmic(double x) {
         return constants.get("a") * log(constants.get("b") * x) + constants.get("c");
     }

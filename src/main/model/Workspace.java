@@ -12,14 +12,14 @@ public class Workspace {
     }
 
     // REQUIRES: name must not be an empty string
-    // MODIFIES: this
+    // MODIFIES: this, Function
     // EFFECTS: adds a Function object to the list of functions with certain name
     public void addFunction(Function func, String name) {
         functionList.put(name, func);
     }
 
     // REQUIRES: key "name" must exist in functionList
-    // MODIFIES: this
+    // MODIFIES: this, Function
     // EFFECTS: removes Function object corresponding to "name" key in functionList
     public void removeFunction(String name) {
         functionList.remove(name);

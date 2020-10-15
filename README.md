@@ -15,9 +15,9 @@ values. It would be used by people such as:
 This is of interest to me because I am a BCS student
 whose prior degree was in physics from SFU. While I am
 no longer going down that route, I still have an interest
-in math and science, and for a while now I have thought
-about coding my own version of something like Desmos or
-Mathematica in terms of their plotting capabilities.
+in math and science, and I have had an interest in coding
+my own version of something like Desmos or Mathematica in
+terms of their plotting capabilities.
 
 ## User Stories
 - As a user, I want to be able to define and add math
@@ -25,6 +25,6 @@ functions to my workspace
 - As a user, I want to be able delete a function from my
 workspace
 - As a user, I want to be able to output the list of
-functions in a certain workspace
+functions in the workspace
 - As a user, I want to be able to calculate the output of
 a function with a particular input
