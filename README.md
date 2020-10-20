@@ -27,4 +27,7 @@ workspace
 - As a user, I want to be able to output the list of
 functions in the workspace
 - As a user, I want to be able to calculate the output of
-a function with a particular input
+a function in the workspace with a particular input
+- As a user, I want to be able to save a workspace to a file
+- As a user, I want to be able to load a workspace back up
+from a file
