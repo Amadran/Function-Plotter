@@ -1,12 +1,10 @@
 package model;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import static java.lang.Double.NaN;
 import static java.lang.Math.*;
@@ -29,80 +27,6 @@ class FunctionTest {
         testYVals = new ArrayList<>();
     }
 
-    //constants helper
-    public void initConstants(double[] constants) {
-        for (int i = 0; i < constants.length; i++) {
-            testConst.put(constantKeys[i], constants[i]);
-        }
-    }
-
-    //constructor initialization helper (also generates function values to test)
-    public void helperConstructorInit(String funcType, double left, double right) {
-        testType = funcType;
-        testDomain.add(left);
-        testDomain.add(right);
-
-        //initialize x-values to test
-        double i = left;
-        while (i <= right) {
-            testXVals.add(i);
-            i += Function.DELTA;
-        }
-
-        //initialize y-values to test
-        switch (funcType) {
-            case Function.TYPE_LINEAR:
-                for (Double x : testXVals) {
-                    double y = testConst.get("a") * x + testConst.get("b");
-                    testYVals.add(y);
-                }
-                break;
-            case Function.TYPE_POLY:
-                for (Double x : testXVals) {
-                    double y = testConst.get("a") * x*x*x*x*x + testConst.get("b") * x*x*x*x
-                             + testConst.get("c") * x*x*x + testConst.get("d") * x*x
-                             + testConst.get("e") * x + testConst.get("f");
-                    testYVals.add(y);
-                }
-                break;
-            case Function.TYPE_EXP:
-                for (Double x : testXVals) {
-                    double y = testConst.get("a") * exp(testConst.get("b") * x) + testConst.get("c");
-                    testYVals.add(y);
-                }
-                break;
-            case Function.TYPE_TRIG:
-                for (Double x : testXVals) {
-                    double y = testConst.get("a") * sin(testConst.get("b") * x)
-                             + testConst.get("c") * cos(testConst.get("d") * x)
-                             + testConst.get("e") * tan(testConst.get("f") * x) + testConst.get("g");
-                    testYVals.add(y);
-                }
-                break;
-            case Function.TYPE_LOG:
-                for (Double x : testXVals) {
-                    double y = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
-                    testYVals.add(y);
-                }
-        }
-    }
-
-    //constructor checking helper
-    public void helperConstructorCheck(Function f, double left, double right) {
-        assertEquals(testType, f.getFunctionType());
-        assertEquals(testDomain.get(0), f.getDomain().get(0), Function.DELTA / 100.0);
-        assertEquals(testDomain.get(1), f.getDomain().get(1), Function.DELTA / 100.0);
-        for (Map.Entry<String, Double> c : testConst.entrySet()) {
-            assertEquals(c.getValue(), f.getConstants().get(c.getKey()), Function.DELTA / 100.0);
-        }
-        for (int i = 0; i < testXVals.size(); i++) {
-            assertEquals(testXVals.get(i), f.getValuesX().get(i), Function.DELTA / 100.0);
-        }
-        for (int i = 0; i < testYVals.size(); i++) {
-            assertEquals(testYVals.get(i), f.getValuesY().get(i), Function.DELTA / 100.0);
-        }
-    }
-
     @Test
     public void testConstructorLinear() {
         //initialization
@@ -114,7 +38,7 @@ class FunctionTest {
         Function func = new Function(testType, testConst, testDomain);
 
         //check
-        helperConstructorCheck(func, -3.0, 3.0);
+        helperConstructorCheck(func);
     }
 
     @Test
@@ -128,7 +52,7 @@ class FunctionTest {
         Function func = new Function(testType, testConst, testDomain);
 
         //check
-        helperConstructorCheck(func, -3.0, 3.0);
+        helperConstructorCheck(func);
     }
 
     @Test
@@ -142,7 +66,7 @@ class FunctionTest {
         Function func = new Function(testType, testConst, testDomain);
 
         //check
-        helperConstructorCheck(func, -3.0, 3.0);
+        helperConstructorCheck(func);
     }
 
     @Test
@@ -156,7 +80,7 @@ class FunctionTest {
         Function func = new Function(testType, testConst, testDomain);
 
         //check
-        helperConstructorCheck(func, -3.0, 3.0);
+        helperConstructorCheck(func);
     }
 
     @Test
@@ -170,7 +94,7 @@ class FunctionTest {
         Function func = new Function(testType, testConst, testDomain);
 
         //check
-        helperConstructorCheck(func, -3.0, 3.0);
+        helperConstructorCheck(func);
     }
 
     @Test
@@ -265,5 +189,117 @@ class FunctionTest {
         double x = 0.7389;
         double expectedY = NaN;
         assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+    }
+
+    @Test
+    public void testToJson() {
+        //initialize Function object
+        double[] consts = {1.5, -1.5, 0.0, -0.5, 2.5, 1.0};
+        helperTestToJson("testFunction", consts, -2.4, 2.4);
+    }
+
+    //~~~~~~~~~~~~~~~~HELPERS~~~~~~~~~~~~~~~~~
+
+    //constants helper
+    private void initConstants(double[] constants) {
+        for (int i = 0; i < constants.length; i++) {
+            testConst.put(constantKeys[i], constants[i]);
+        }
+    }
+
+    //constructor initialization helper (also generates function values to test)
+    private void helperConstructorInit(String funcType, double left, double right) {
+        helperConstructorInitAllButY(funcType, left, right);
+
+        //initialize y-values to test
+        switch (funcType) {
+            case Function.TYPE_LINEAR:
+                for (Double x : testXVals) {
+                    double y = testConst.get("a") * x + testConst.get("b");
+                    testYVals.add(y);
+                }
+                break;
+            case Function.TYPE_POLY:
+                for (Double x : testXVals) {
+                    double y = testConst.get("a") * x*x*x*x*x + testConst.get("b") * x*x*x*x
+                            + testConst.get("c") * x*x*x + testConst.get("d") * x*x
+                            + testConst.get("e") * x + testConst.get("f");
+                    testYVals.add(y);
+                }
+                break;
+            default:
+                helperConstructorInitSwitchSplit(funcType);
+        }
+    }
+
+    //helper for helperConstructorInit (does all initialization except for testYVals)
+    private void helperConstructorInitAllButY(String funcType, double left, double right) {
+        testType = funcType;
+        testDomain.add(left);
+        testDomain.add(right);
+
+        //initialize x-values to test
+        double i = left;
+        while (i <= right) {
+            testXVals.add(i);
+            i += Function.DELTA;
+        }
+    }
+
+    //helper for helperConstructorInit (splits large switch statement for testYVals initialization)
+    private void helperConstructorInitSwitchSplit(String funcType) {
+        switch (funcType) {
+            case Function.TYPE_EXP:
+                for (Double x : testXVals) {
+                    double y = testConst.get("a") * exp(testConst.get("b") * x) + testConst.get("c");
+                    testYVals.add(y);
+                }
+                break;
+            case Function.TYPE_TRIG:
+                for (Double x : testXVals) {
+                    double y = testConst.get("a") * sin(testConst.get("b") * x)
+                            + testConst.get("c") * cos(testConst.get("d") * x)
+                            + testConst.get("e") * tan(testConst.get("f") * x) + testConst.get("g");
+                    testYVals.add(y);
+                }
+                break;
+            case Function.TYPE_LOG:
+                for (Double x : testXVals) {
+                    double y = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
+                    testYVals.add(y);
+                }
+        }
+    }
+
+    //constructor checking helper
+    private void helperConstructorCheck(Function f) {
+        assertEquals(testType, f.getFunctionType());
+        assertEquals(testDomain.get(0), f.getDomain().get(0), Function.DELTA / 100.0);
+        assertEquals(testDomain.get(1), f.getDomain().get(1), Function.DELTA / 100.0);
+        for (Map.Entry<String, Double> c : testConst.entrySet()) {
+            assertEquals(c.getValue(), f.getConstants().get(c.getKey()), Function.DELTA / 100.0);
+        }
+        for (int i = 0; i < testXVals.size(); i++) {
+            assertEquals(testXVals.get(i), f.getValuesX().get(i), Function.DELTA / 100.0);
+        }
+        for (int i = 0; i < testYVals.size(); i++) {
+            assertEquals(testYVals.get(i), f.getValuesY().get(i), Function.DELTA / 100.0);
+        }
+    }
+
+    //testToJson() helper
+    private void helperTestToJson(String name, double[] consts, double left, double right) {
+        //initialize Function object
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_POLY, left, right);
+        Function func = new Function(testType, testConst, testDomain);
+
+        //initialize test JSONObject
+        JSONObject expectedJson = new JSONObject();
+        JsonTest.helperInitJsonObject(expectedJson, name, testType, testConst, testDomain, testXVals, testYVals);
+
+        //check the JSONObject
+        JSONObject actualJson = func.toJson(name);
+        JsonTest.helperToJsonCheck(expectedJson, actualJson);
     }
 }

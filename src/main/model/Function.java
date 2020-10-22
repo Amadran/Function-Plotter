@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +14,7 @@ import static java.lang.Math.*;
 
 // Represents an individual mathematical function, containing information
 // on it's definition and containing the capability to return x and y values
-public class Function {
+public class Function implements Writable {
     public static final double DELTA = 0.5; //x-value spacing
     public static final String TYPE_LINEAR = "linear";
     public static final String TYPE_POLY = "polynomial";
@@ -18,6 +22,7 @@ public class Function {
     public static final String TYPE_TRIG = "trigonometric";
     public static final String TYPE_LOG = "logarithmic";
     public static final String[] CONSTANT_NAMES = {"a","b","c","d","e","f","g"};
+    private static final HashMap<String, Integer> NUMBER_OF_CONSTANTS_FOR_TYPE = new HashMap<>();
 
     private final String functionType;
     private HashMap<String, Double> constants;
@@ -42,6 +47,7 @@ public class Function {
         //initialize simple fields
         functionType = type;
         constants = funcConstants;
+        initNumberOfConstantsForType();
         domain = domainX;
         valuesX = new ArrayList<>();
         valuesY = new ArrayList<>();
@@ -53,6 +59,17 @@ public class Function {
             valuesY.add(evalFunction(i));
             i += Function.DELTA;
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes HashMap containing mappings between function type and their
+    //          respective number of constants in the function definition
+    private void initNumberOfConstantsForType() {
+        NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_LINEAR, 2);
+        NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_POLY, 6);
+        NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_EXP, 3);
+        NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_TRIG, 7);
+        NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_LOG, 3);
     }
 
     // REQUIRES: x must be in the domain of the function
@@ -135,5 +152,33 @@ public class Function {
     // EFFECTS: evaluates a function defined by the type TYPE_LOG
     private double evalLogarithmic(double x) {
         return constants.get("a") * log(constants.get("b") * x) + constants.get("c");
+    }
+
+    // ~~~~~~~~~~~~~~~~~~OVERRIDDEN METHODS (and related)~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    // EFFECTS: returns Function object as JSONObject
+    public JSONObject toJson(String name) {
+        JSONObject json = new JSONObject();
+
+        json.put("name", name);
+        json.put("type", functionType);
+        json.put("constants", constantsToJson());
+        json.put("domain", domain);
+        json.put("valuesX", valuesX);
+        json.put("valuesY", valuesY);
+
+        return json;
+    }
+
+    // EFFECTS: returns constants as JSONArray (for toJson() method)
+    private JSONObject constantsToJson() {
+        JSONObject constantsJson = new JSONObject();
+
+        for (int i = 0; i < NUMBER_OF_CONSTANTS_FOR_TYPE.get(functionType); i++) {
+            constantsJson.put(CONSTANT_NAMES[i], constants.get(CONSTANT_NAMES[i]));
+        }
+
+        return constantsJson;
     }
 }

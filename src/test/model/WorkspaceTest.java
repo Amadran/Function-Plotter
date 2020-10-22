@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,31 +40,19 @@ public class WorkspaceTest {
 
     @Test
     public void testAddFunctionMultiple() {
-        //function 1
-        double[] constants1 = {2.0, -1.0, -0.5};
-        String funcName1 = "test func1";
-        Function func1 = helperAddFunction(funcName1, Function.TYPE_EXP, -3.0, 3.0, constants1);
-
-        //function 2
-        double[] constants2 = {-1.5, 2.5};
-        String funcName2 = "test func2";
-        Function func2 = helperAddFunction(funcName2, Function.TYPE_LINEAR, -3.0, 3.0, constants2);
-
-        //function 3
-        double[] constants3 = {-1.5, 2.5, -0.5, -2.0, 1.0, -2.5, 0.5};
-        String funcName3 = "test func3";
-        Function func3 = helperAddFunction(funcName3, Function.TYPE_TRIG, -3.0, 3.0, constants3);
+        //create 3 functions
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(functions, funcNames); //functions are defined inside this method
 
         //check that workspace contains all 3 functions
         assertEquals(3, workspace.getFunctionListLength());
-        assertEquals(func1, workspace.getFunction(funcName1));
-        assertEquals(func2, workspace.getFunction(funcName2));
-        assertEquals(func3, workspace.getFunction(funcName3));
+        assertEquals(functions.get(funcNames[0]), workspace.getFunction(funcNames[0]));
+        assertEquals(functions.get(funcNames[1]), workspace.getFunction(funcNames[1]));
+        assertEquals(functions.get(funcNames[2]), workspace.getFunction(funcNames[2]));
 
         //check getFunctionList() explicitly, since it is not used anywhere
-        Function[] funcArray = {func1, func2, func3};
-        String[] funcNames = {funcName1, funcName2, funcName3};
-        helperGetFunctionList(funcArray, funcNames);
+        helperGetFunctionList(functions, funcNames);
     }
 
     @Test
@@ -81,41 +71,53 @@ public class WorkspaceTest {
 
     @Test
     public void testRemoveFunctionMultiple() {
-        //repeat adding functions in testAddFunctionMultiple
-        //function 1
-        double[] constants1 = {2.0, -1.0, -0.5};
-        String funcName1 = "test func1";
-        Function func1 = helperAddFunction(funcName1, Function.TYPE_EXP, -3.0, 3.0, constants1);
-
-        //function 2
-        double[] constants2 = {-1.5, 2.5};
-        String funcName2 = "test func2";
-        Function func2 = helperAddFunction(funcName2, Function.TYPE_LINEAR, -3.0, 3.0, constants2);
-
-        //function 3
-        double[] constants3 = {-1.5, 2.5, -0.5, -2.0, 1.0, -2.5, 0.5};
-        String funcName3 = "test func3";
-        Function func3 = helperAddFunction(funcName3, Function.TYPE_TRIG, -3.0, 3.0, constants3);
+        //create 3 functions
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(functions, funcNames); //functions are defined inside this method
 
         //remove function
-        workspace.removeFunction(funcName2);
+        workspace.removeFunction(funcNames[1]);
         assertEquals(2, workspace.getFunctionListLength());
-        assertEquals(func1, workspace.getFunction(funcName1));
-        assertNull(workspace.getFunction(funcName2));
-        assertEquals(func3, workspace.getFunction(funcName3));
+        assertEquals(functions.get(funcNames[0]), workspace.getFunction(funcNames[0]));
+        assertNull(workspace.getFunction(funcNames[1]));
+        assertEquals(functions.get(funcNames[2]), workspace.getFunction(funcNames[2]));
+    }
+
+    @Test
+    public void testToJson() {
+        //initialize 3 functions
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(functions, funcNames); //functions are defined inside this method
+
+        //initialize expected JSONObject and JSONArray
+        JSONObject expectedJson = new JSONObject();
+        JSONArray expectedJsonFuncArray = new JSONArray();
+        String workspaceName = "workspace1";
+        helperInitExpectedJson(expectedJson, expectedJsonFuncArray, workspaceName, functions, funcNames);
+
+        //check
+        JSONObject actualJson = workspace.toJson(workspaceName);
+        JSONArray actualArray = actualJson.getJSONArray("functionList");
+
+        assertEquals(expectedJson.get("name"), actualJson.get("name"));
+        for (int i = 0; i < actualArray.length(); i++) {
+            JsonTest.helperToJsonCheck(expectedJsonFuncArray.getJSONObject(i), actualArray.getJSONObject(i));
+        }
     }
 
     //~~~~~~~~~~~~~HELPERS~~~~~~~~~~~~~
 
     //constants helper
-    public void helperInitConstants(double[] constArray, HashMap<String, Double> funcConstants) {
+    private void helperInitConstants(double[] constArray, HashMap<String, Double> funcConstants) {
         for (int i = 0; i < constArray.length; i++) {
             funcConstants.put(Function.CONSTANT_NAMES[i], constArray[i]);
         }
     }
 
     //addFunction helper
-    public Function helperAddFunction(String name, String type, double left, double right, double[] constArray) {
+    private Function helperAddFunction(String name, String type, double left, double right, double[] constArray) {
         //initialize constants and domain of function to add
         HashMap<String, Double> constants = new HashMap<>();
         List<Double> domain = new ArrayList<>();
@@ -131,17 +133,16 @@ public class WorkspaceTest {
     }
 
     //helper to test getFunctionList() inside testAddFunctionMultiple() test (since it is not tested implicitly)
-    public void helperGetFunctionList(Function[] funcArray, String[] funcNames) {
+    private void helperGetFunctionList(HashMap<String, Function> functions, String[] funcNames) {
         //initialize expected values
         HashMap<String, Function> expectedFunctions = new HashMap<>();
-        expectedFunctions.put(funcNames[0], funcArray[0]);
-        expectedFunctions.put(funcNames[1], funcArray[1]);
-        expectedFunctions.put(funcNames[2], funcArray[2]);
+        expectedFunctions.put(funcNames[0], functions.get(funcNames[0]));
+        expectedFunctions.put(funcNames[1], functions.get(funcNames[1]));
+        expectedFunctions.put(funcNames[2], functions.get(funcNames[2]));
 
         //return actual values to test
         HashMap<String, Function> actualFunctions = workspace.getFunctionList();
         ArrayList<String> actualFunctionNames = new ArrayList<>(actualFunctions.keySet());
-        ArrayList<Function> actualFunctionList = new ArrayList<>(actualFunctions.values());
 
         //check names and Function objects
         int i = 0;
@@ -150,5 +151,39 @@ public class WorkspaceTest {
             i++;
         }
         assertEquals(expectedFunctions, actualFunctions);
+    }
+
+    //helper to create 3 functions at once (define them inside here)
+    private void helperInitMultipleFunctions(HashMap<String, Function> functions, String[] names) {
+        //function 1
+        double[] constants1 = {2.0, -1.0, -0.5};
+        Function func1 = helperAddFunction(names[0], Function.TYPE_EXP, -3.0, 3.0, constants1);
+        functions.put(names[0], func1); //"functions" list comes in empty
+
+        //function 2
+        double[] constants2 = {-1.5, 2.5};
+        Function func2 = helperAddFunction(names[1], Function.TYPE_LINEAR, -3.0, 3.0, constants2);
+        functions.put(names[1], func2);
+
+        //function 3
+        double[] constants3 = {-1.5, 2.5, -0.5, -2.0, 1.0, -2.5, 0.5};
+        Function func3 = helperAddFunction(names[2], Function.TYPE_TRIG, -3.0, 3.0, constants3);
+        functions.put(names[2], func3);
+    }
+
+    //toJson helper (initializes expectedJson JSONObject and underlying JSONArray)
+    private void helperInitExpectedJson(JSONObject expectedJson, JSONArray expectedJsonFuncArray,
+                                        String workspaceName, HashMap<String, Function> functions,
+                                        String[] funcNames) {
+        //populate expected JSONObject (and underlying JSONArray)
+        expectedJson.put("name", workspaceName);
+        for (String funcName : funcNames) {
+            JSONObject funcJson = new JSONObject();
+            JsonTest.helperInitJsonObject(funcJson, funcName, functions.get(funcName).getFunctionType(),
+                    functions.get(funcName).getConstants(), functions.get(funcName).getDomain(),
+                    functions.get(funcName).getValuesX(), functions.get(funcName).getValuesY());
+            expectedJsonFuncArray.put(funcJson);
+        }
+        expectedJson.put("functionList", expectedJsonFuncArray);
     }
 }
