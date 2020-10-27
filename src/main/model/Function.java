@@ -1,12 +1,11 @@
 package model;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import persistence.Writable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.Double.NaN;
 import static java.lang.Math.*;
@@ -14,14 +13,15 @@ import static java.lang.Math.*;
 
 // Represents an individual mathematical function, containing information
 // on it's definition and containing the capability to return x and y values
-public class Function implements Writable {
-    public static final double DELTA = 0.5; //x-value spacing
+public class Function {
+    public static final double DELTA = 0.25; //x-value spacing
     public static final String TYPE_LINEAR = "linear";
     public static final String TYPE_POLY = "polynomial";
     public static final String TYPE_EXP = "exponential";
     public static final String TYPE_TRIG = "trigonometric";
     public static final String TYPE_LOG = "logarithmic";
     public static final String[] CONSTANT_NAMES = {"a","b","c","d","e","f","g"};
+    private static final int HASH_MULTIPLIER = 73; //prime number used for hashCode()
     private static final HashMap<String, Integer> NUMBER_OF_CONSTANTS_FOR_TYPE = new HashMap<>();
 
     private final String functionType;
@@ -154,9 +154,7 @@ public class Function implements Writable {
         return constants.get("a") * log(constants.get("b") * x) + constants.get("c");
     }
 
-    // ~~~~~~~~~~~~~~~~~~OVERRIDDEN METHODS (and related)~~~~~~~~~~~~~~~~~~~
-
-    @Override
+    // REQUIRES: a Function object with name "name" exists in the corresponding Workspace
     // EFFECTS: returns Function object as JSONObject
     public JSONObject toJson(String name) {
         JSONObject json = new JSONObject();
@@ -180,5 +178,28 @@ public class Function implements Writable {
         }
 
         return constantsJson;
+    }
+
+    @Override
+    // EFFECTS: returns true if this and o are equal by each field, false otherwise
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
+        } else {
+            Function function = (Function) o;
+            return functionType.equals(function.functionType)
+                    && constants.equals(function.constants)
+                    && domain.equals(function.domain)
+                    && valuesY.equals(function.valuesY)
+                    && valuesX.equals(function.valuesX);
+        }
+    }
+
+    @Override
+    // EFFECTS: generates a hash code for this
+    public int hashCode() {
+        return Objects.hash(functionType, constants, domain, valuesY, valuesX);
     }
 }

@@ -55,7 +55,7 @@ public class FunctionPlotter {
         while (true) {
             System.out.println("\n1 - Add a function to the workspace\n2 - Show function descriptions and outputs\n"
                     + "3 - Evaluate a function at a particular value\n4 - Delete a function from the workspace\n"
-                    + "5 - Quit Program");
+                    + "5 - Save Workspace to file\n6 - Load Workspace from file\n7 - Quit Program");
             processMainMenuInput(input.nextLine());
         }
     }
@@ -76,7 +76,13 @@ public class FunctionPlotter {
             case "4":
                 deleteFunction();
                 break;
-            case "5":
+//            case "5":
+//                saveWorkspace();
+//                break;
+//            case "6":
+//                loadWorkspace();
+//                break;
+            case "7":
                 System.exit(0); //quit condition
                 break;
             default:
@@ -300,4 +306,15 @@ public class FunctionPlotter {
         input.nextLine();
         return selection;
     }
+
+//    // EFFECTS: saves the current state of the workspace to a .json file
+//    private void saveWorkspace() {
+//
+//    }
+//
+//    // MODIFIES: this, Workspace, Function (?)
+//    // EFFECTS: loads a workspace from a .json file into this
+//    private void loadWorkspace() {
+//
+//    }
 }

@@ -94,14 +94,12 @@ public class WorkspaceTest {
         //initialize expected JSONObject and JSONArray
         JSONObject expectedJson = new JSONObject();
         JSONArray expectedJsonFuncArray = new JSONArray();
-        String workspaceName = "workspace1";
-        helperInitExpectedJson(expectedJson, expectedJsonFuncArray, workspaceName, functions, funcNames);
+        helperInitExpectedJson(expectedJson, expectedJsonFuncArray, functions, funcNames);
 
         //check
-        JSONObject actualJson = workspace.toJson(workspaceName);
+        JSONObject actualJson = workspace.toJson();
         JSONArray actualArray = actualJson.getJSONArray("functionList");
 
-        assertEquals(expectedJson.get("name"), actualJson.get("name"));
         for (int i = 0; i < actualArray.length(); i++) {
             JsonTest.helperToJsonCheck(expectedJsonFuncArray.getJSONObject(i), actualArray.getJSONObject(i));
         }
@@ -173,10 +171,8 @@ public class WorkspaceTest {
 
     //toJson helper (initializes expectedJson JSONObject and underlying JSONArray)
     private void helperInitExpectedJson(JSONObject expectedJson, JSONArray expectedJsonFuncArray,
-                                        String workspaceName, HashMap<String, Function> functions,
-                                        String[] funcNames) {
+                                        HashMap<String, Function> functions, String[] funcNames) {
         //populate expected JSONObject (and underlying JSONArray)
-        expectedJson.put("name", workspaceName);
         for (String funcName : funcNames) {
             JSONObject funcJson = new JSONObject();
             JsonTest.helperInitJsonObject(funcJson, funcName, functions.get(funcName).getFunctionType(),

@@ -18,6 +18,7 @@ class FunctionTest {
     private List<Double> testYVals;
 
     private final String[] constantKeys = {"a","b","c","d","e","f","g"};
+    private final double ASSERT_EQUALS_TOLERANCE = 1e6;
 
     @BeforeEach
     public void setup() {
@@ -109,7 +110,7 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * x + testConst.get("b");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
     }
 
     @Test
@@ -126,7 +127,7 @@ class FunctionTest {
         double expectedY = testConst.get("a") * x*x*x*x*x + testConst.get("b") * x*x*x*x
                          + testConst.get("c") * x*x*x + testConst.get("d") * x*x
                          + testConst.get("e") * x + testConst.get("f");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
     }
 
     @Test
@@ -141,7 +142,7 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * exp(testConst.get("b") * x) + testConst.get("c");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
     }
 
     @Test
@@ -158,7 +159,7 @@ class FunctionTest {
         double expectedY = testConst.get("a") * sin(testConst.get("b") * x)
                          + testConst.get("c") * cos(testConst.get("d") * x)
                          + testConst.get("e") * tan(testConst.get("f") * x) + testConst.get("g");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
     }
 
     @Test
@@ -173,7 +174,7 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = testConst.get("a") * log(testConst.get("b") * x) + testConst.get("c");
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
     }
 
     @Test
@@ -188,7 +189,7 @@ class FunctionTest {
 
         double x = 0.7389;
         double expectedY = NaN;
-        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / 100.0);
+        assertEquals(expectedY, func.evalFunction(x), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
     }
 
     @Test
@@ -274,16 +275,16 @@ class FunctionTest {
     //constructor checking helper
     private void helperConstructorCheck(Function f) {
         assertEquals(testType, f.getFunctionType());
-        assertEquals(testDomain.get(0), f.getDomain().get(0), Function.DELTA / 100.0);
-        assertEquals(testDomain.get(1), f.getDomain().get(1), Function.DELTA / 100.0);
+        assertEquals(testDomain.get(0), f.getDomain().get(0), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
+        assertEquals(testDomain.get(1), f.getDomain().get(1), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
         for (Map.Entry<String, Double> c : testConst.entrySet()) {
-            assertEquals(c.getValue(), f.getConstants().get(c.getKey()), Function.DELTA / 100.0);
+            assertEquals(c.getValue(), f.getConstants().get(c.getKey()), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
         }
         for (int i = 0; i < testXVals.size(); i++) {
-            assertEquals(testXVals.get(i), f.getValuesX().get(i), Function.DELTA / 100.0);
+            assertEquals(testXVals.get(i), f.getValuesX().get(i), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
         }
         for (int i = 0; i < testYVals.size(); i++) {
-            assertEquals(testYVals.get(i), f.getValuesY().get(i), Function.DELTA / 100.0);
+            assertEquals(testYVals.get(i), f.getValuesY().get(i), Function.DELTA / ASSERT_EQUALS_TOLERANCE);
         }
     }
 

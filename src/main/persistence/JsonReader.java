@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-// Represents a reader that reads workroom from JSON data stored in file
+// Represents a reader that reads a workspace from JSON data stored in a file
+// CITATION: modelled after JsonSerializationDemo's JsonReader class, with slight modifications
+// to read() and parseWorkspace() (with accompanying populateWorkspace() and populateConstantsAndDomain())
+// https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo/commit/d79763d7ed5bb61196c51570598336948efe1202
 public class JsonReader {
     private String source;
 
