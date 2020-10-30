@@ -260,9 +260,9 @@ class FunctionTest {
         helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
         Function func = new Function(testType, testConst, testDomain);
 
-        double[] consts2 = {-2.0, 1.5, 3.0};
+        double[] consts2 = {0.5, -1.0};
         initConstants(consts2);
-        helperConstructorInit(Function.TYPE_EXP, -2.0, 2.0);
+        helperConstructorInit(Function.TYPE_LINEAR, -2.25, 2.25);
         Function otherFunc = new Function(testType, testConst, testDomain);
 
         //check
