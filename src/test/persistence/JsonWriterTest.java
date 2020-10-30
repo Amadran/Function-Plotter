@@ -67,7 +67,6 @@ public class JsonWriterTest {
             //write workspace to file
             writer.open();
             writer.write(workspace);
-            writer.close();
 
             //read workspace back from file
             Workspace workspaceFromFile = reader.read();
@@ -78,6 +77,8 @@ public class JsonWriterTest {
             assertEquals(workspaceFromFile, workspace);
         } catch (IOException ioe) {
             fail("IOException was not expected");
+        } finally {
+            writer.close();
         }
     }
 

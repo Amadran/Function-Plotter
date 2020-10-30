@@ -2,17 +2,26 @@ package ui;
 
 import model.Function;
 import model.Workspace;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-//interface for function plotting program, which uses the methods available to Workspace and Function
-//to output their respective information
+//User interface for function plotting program, which uses the methods available to Workspace and Function
+//to output relevant information
 public class FunctionPlotter {
-    // number of constants that the UI should wait for when processInputDefineFunction is running,
-    // since it is different for each function type
+    // NUMBER_OF_CONSTANTS_FOR_TYPE: number of constants that the UI should wait for when defineFunctionConstants
+    // is running, since it is different for each function type
     private static final HashMap<String, Integer> NUMBER_OF_CONSTANTS_FOR_TYPE = new HashMap<>();
+    private static final String FUNC_EXPRESSION_LINEAR = "a*x + b";
+    private static final String FUNC_EXPRESSION_POLY = "a*x^5 + b*x^4 + c*x^3 + d*x^2 + e*x + f";
+    private static final String FUNC_EXPRESSION_EXP = "a*e^(b*x) + c";
+    private static final String FUNC_EXPRESSION_TRIG = "a*sin(b*x) + c*cos(d*x) + e*tan(f*x) + g";
+    private static final String FUNC_EXPRESSION_LOG = "a*ln(b*x) + c";
     private static final String ERROR_INPUT_GENERIC = "Please enter an appropriate command";
     private static final String ERROR_INPUT_DOMAIN_BOUNDARY = "Left boundary must be less than right boundary";
     private static final String ERROR_INPUT_EMPTY_WORKSPACE = "Workspace is empty, must create at least one function";
@@ -76,12 +85,21 @@ public class FunctionPlotter {
             case "4":
                 deleteFunction();
                 break;
-//            case "5":
-//                saveWorkspace();
-//                break;
-//            case "6":
-//                loadWorkspace();
-//                break;
+            default:
+                processMainMenuInputSwitchContinuation(menuInput);
+        }
+    }
+
+    // MODIFIES: this, Function, Workspace
+    // EFFECTS: processes input from main menu
+    private void processMainMenuInputSwitchContinuation(String menuInput) {
+        switch (menuInput) {
+            case "5":
+                saveWorkspace();
+                break;
+            case "6":
+                loadWorkspace();
+                break;
             case "7":
                 System.exit(0); //quit condition
                 break;
@@ -107,9 +125,9 @@ public class FunctionPlotter {
     }
 
     // EFFECTS: converts selection into appropriate Function type string
-    //          (used in defineFunctionType())
-    private String convertToTypeString(String type) {
-        switch (type) {
+    //          (returns null if invalid selection; used in defineFunctionType())
+    private String convertSelectionToType(String selection) {
+        switch (selection) {
             case "1":
                 return Function.TYPE_LINEAR;
             case "2":
@@ -120,6 +138,25 @@ public class FunctionPlotter {
                 return Function.TYPE_TRIG;
             case "5":
                 return Function.TYPE_LOG;
+            default:
+                return null;
+        }
+    }
+
+    // EFFECTS: converts Function type string into a human-readable expression of the math function
+    //          (returns null if invalid type; used in outputFunctions())
+    private String convertTypeToFunctionExpression(String type) {
+        switch (type) {
+            case Function.TYPE_LINEAR:
+                return FUNC_EXPRESSION_LINEAR;
+            case Function.TYPE_POLY:
+                return FUNC_EXPRESSION_POLY;
+            case Function.TYPE_EXP:
+                return FUNC_EXPRESSION_EXP;
+            case Function.TYPE_TRIG:
+                return FUNC_EXPRESSION_TRIG;
+            case Function.TYPE_LOG:
+                return FUNC_EXPRESSION_LOG;
             default:
                 return null;
         }
@@ -138,9 +175,12 @@ public class FunctionPlotter {
         String type = null;
 
         while (true) {
-            System.out.println("\nSelect a function type:\n1 - linear\n2 - polynomial (up to x^5)\n"
-                    + "3 - exponential\n4 - trigonometric\n5 - logarithmic (natural)");
-            type = convertToTypeString(input.nextLine());
+            System.out.println("\nSelect a function type:\n1 - linear (" + FUNC_EXPRESSION_LINEAR + ")\n"
+                    + "2 - polynomial (" + FUNC_EXPRESSION_POLY + ")\n"
+                    + "3 - exponential (" + FUNC_EXPRESSION_EXP + ")\n"
+                    + "4 - trigonometric (" + FUNC_EXPRESSION_TRIG + ")\n"
+                    + "5 - logarithmic (" + FUNC_EXPRESSION_LOG + ")");
+            type = convertSelectionToType(input.nextLine());
 
             if (type == null) {
                 System.out.println(ERROR_INPUT_GENERIC);
@@ -156,12 +196,15 @@ public class FunctionPlotter {
         ArrayList<Double> domain = new ArrayList<>();
 
         while (true) {
-            System.out.println("Specify the domain of the function (x range):\nLeft boundary: ");
+            System.out.println("Specify the domain of the function\n"
+                    + "(the boundaries should be a multiple of Function.DELTA = " + Function.DELTA
+                    + ", otherwise the right boundary will be excluded)\nLeft boundary: ");
             domain.add(0, input.nextDouble());
             input.nextLine();
-            System.out.println("Right boundary: ");
+            System.out.println("\nRight boundary: ");
             domain.add(1, input.nextDouble());
             input.nextLine();
+
             if (domain.get(0) >= domain.get(1)) {
                 System.out.println(ERROR_INPUT_DOMAIN_BOUNDARY);
             } else {
@@ -199,8 +242,10 @@ public class FunctionPlotter {
         } else {
             for (int i = 0; i < funcArray.size(); i++) {
                 Function func = funcArray.get(i);
+                String type = func.getFunctionType();
+
                 System.out.println("Name: " + funcNames.get(i));
-                System.out.println("Type: " + func.getFunctionType());
+                System.out.println("Type: " + type + " (f(x) = " + convertTypeToFunctionExpression(type) + ")");
                 System.out.println("Constants: " + func.getConstants());
                 System.out.println("Domain: " + func.getDomain());
                 System.out.println("x-values: " + func.getValuesX());
@@ -307,14 +352,47 @@ public class FunctionPlotter {
         return selection;
     }
 
-//    // EFFECTS: saves the current state of the workspace to a .json file
-//    private void saveWorkspace() {
-//
-//    }
-//
-//    // MODIFIES: this, Workspace, Function (?)
-//    // EFFECTS: loads a workspace from a .json file into this
-//    private void loadWorkspace() {
-//
-//    }
+    // MODIFIES: this
+    // EFFECTS: saves the current state of the workspace to a .json file
+    private void saveWorkspace() {
+        String filename = null;
+        JsonWriter writer;
+
+        while (true) {
+            System.out.println("Enter a name for the file:");
+            filename = input.nextLine();
+            writer = new JsonWriter("./data/" + filename + ".json");
+
+            try {
+                writer.open();
+                writer.write(workspace);
+                writer.close();
+                System.out.println("File saved to './data/" + filename + ".json'");
+                break;
+            } catch (FileNotFoundException e) {
+                System.out.println("File could not be opened for writing\n");
+            }
+        }
+    }
+
+    // MODIFIES: this, Workspace, Function (?)
+    // EFFECTS: loads a workspace from a .json file into this
+    private void loadWorkspace() {
+        String filename = null;
+        JsonReader reader;
+
+        while (true) {
+            System.out.println("Enter the name for the file to load:");
+            filename = input.nextLine();
+            reader = new JsonReader("./data/" + filename + ".json");
+
+            try {
+                workspace = reader.read();
+                System.out.println("File './data/" + filename + ".json' loaded");
+                break;
+            } catch (IOException e) {
+                System.out.println("File could not be opened for reading\nMake sure the file exists");
+            }
+        }
+    }
 }
