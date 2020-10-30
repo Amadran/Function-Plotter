@@ -32,7 +32,7 @@ class FunctionTest {
     public void testConstructorLinear() {
         //initialization
         double[] consts = {2.0, 1.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_LINEAR, -3.0, 3.0);
         
         //test
@@ -46,7 +46,7 @@ class FunctionTest {
     public void testConstructorPolynomial() {
         //initialization
         double[] consts = {-2.0, -2.0, 3.0, 2.5, -1.0, 0.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_POLY, -3.0, 3.0);
 
         //test
@@ -60,7 +60,7 @@ class FunctionTest {
     public void testConstructorExponential() {
         //initialization
         double[] consts = {2.0, 2.0, 3.0};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
 
         //test
@@ -74,7 +74,7 @@ class FunctionTest {
     public void testConstructorTrigonometric() {
         //initialization
         double[] consts = {2.0, 2.0, -1.5, -1.5, 2.0, 2.0, 0.0};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_TRIG, -3.0, 3.0);
 
         //test
@@ -88,7 +88,7 @@ class FunctionTest {
     public void testConstructorLogarithmic() {
         //initialization
         double[] consts = {2.0, -2.0, 1.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_LOG, -3.0, 3.0);
 
         //test
@@ -104,7 +104,7 @@ class FunctionTest {
         testDomain.add(-3.0);
         testDomain.add(3.0);
         double[] consts = {1.5, -0.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -119,7 +119,7 @@ class FunctionTest {
         testDomain.add(-3.0);
         testDomain.add(3.0);
         double[] consts = {1.0, -2.0, 1.0, 1.0, -1.5, 0.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -136,7 +136,7 @@ class FunctionTest {
         testDomain.add(-3.0);
         testDomain.add(3.0);
         double[] consts = {0.5, -2.5, -0.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -151,7 +151,7 @@ class FunctionTest {
         testDomain.add(-3.0);
         testDomain.add(3.0);
         double[] consts = {0.5, 1.5, -0.5, 2.0, 0.5, -2.5, 0.0};
-        initConstants(consts);
+        testConst = initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -168,7 +168,7 @@ class FunctionTest {
         testDomain.add(-3.0);
         testDomain.add(3.0);
         double[] consts = {1.5, 3.0, -0.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -183,7 +183,7 @@ class FunctionTest {
         testDomain.add(-3.0);
         testDomain.add(3.0);
         double[] consts = {1.5, 3.0, -0.5};
-        initConstants(consts);
+        testConst = initConstants(consts);
 
         Function func = new Function(testType, testConst, testDomain);
 
@@ -202,7 +202,7 @@ class FunctionTest {
     @Test
     public void testEqualsSameObject() {
         double[] consts = {2.0, 2.0, 3.0};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
 
         //test
@@ -215,7 +215,7 @@ class FunctionTest {
     @Test
     public void testEqualsNull() {
         double[] consts = {2.0, 2.0, 3.0};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
 
         //test
@@ -228,7 +228,7 @@ class FunctionTest {
     @Test
     public void testEqualsDifferentObject() {
         double[] consts = {2.0, 2.0, 3.0};
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
 
         //test
@@ -241,71 +241,95 @@ class FunctionTest {
 
     @Test
     public void testEqualsEquivalentObjects() {
-        double[] consts = {2.0, 2.0, 3.0};
-        initConstants(consts);
-        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+        double[] consts1 = {2.0, 2.0};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
 
-        //test
-        Function func = new Function(testType, testConst, testDomain);
-        Function otherFunc = new Function(testType, testConst, testDomain);
+        double[] consts2 = {2.0, 2.0};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(-2.5);
+        domain2.add(2.5);
+        Function func2 = new Function(Function.TYPE_LINEAR, constants2, domain2);
 
         //check
-        assertTrue(func.equals(otherFunc));
+        assertTrue(func2.equals(func1));
     }
 
     @Test
     public void testEqualsNotEqualObjects() {
-        double[] consts1 = {2.0, 2.0, 3.0};
-        initConstants(consts1);
-        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
-        Function func = new Function(testType, testConst, testDomain);
+        double[] consts1 = {2.0, 2.0};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
 
-        double[] consts2 = {0.5, -1.0};
-        initConstants(consts2);
-        helperConstructorInit(Function.TYPE_LINEAR, -2.25, 2.25);
-        Function otherFunc = new Function(testType, testConst, testDomain);
+        double[] consts2 = {1.53, -0.24, 0.8};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(-0.5);
+        domain2.add(0.5);
+        Function func2 = new Function(Function.TYPE_EXP, constants2, domain2);
 
         //check
-        assertFalse(func.equals(otherFunc));
+        assertFalse(func2.equals(func1));
     }
 
     @Test
     public void testHashCodeEqualObjects() {
-        double[] consts = {2.0, 2.0, 3.0};
-        initConstants(consts);
-        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+        double[] consts1 = {2.0, 2.0};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
 
-        //test
-        Function func = new Function(testType, testConst, testDomain);
-        Function otherFunc = new Function(testType, testConst, testDomain);
+        double[] consts2 = {2.0, 2.0};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(-2.5);
+        domain2.add(2.5);
+        Function func2 = new Function(Function.TYPE_LINEAR, constants2, domain2);
 
         //check
-        assertEquals(otherFunc.hashCode(), func.hashCode());
+        assertEquals(func2.hashCode(), func1.hashCode());
     }
 
     @Test
     public void testHashCodeNotEqualObjects() {
-        double[] consts1 = {2.0, 2.0, 3.0};
-        initConstants(consts1);
-        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
-        Function func = new Function(testType, testConst, testDomain);
+        double[] consts1 = {2.0, 2.0};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
 
-        double[] consts2 = {-2.0, 1.5, 3.0};
-        initConstants(consts2);
-        helperConstructorInit(Function.TYPE_EXP, -2.0, 2.0);
-        Function otherFunc = new Function(testType, testConst, testDomain);
+        double[] consts2 = {1.53, -0.24, 0.8};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(-0.5);
+        domain2.add(0.5);
+        Function func2 = new Function(Function.TYPE_EXP, constants2, domain2);
 
         //check
-        assertNotEquals(otherFunc.hashCode(), func.hashCode());
+        assertNotEquals(func2.hashCode(), func1.hashCode());
     }
 
     //~~~~~~~~~~~~~~~~HELPERS~~~~~~~~~~~~~~~~~
 
     //constants helper
-    private void initConstants(double[] constants) {
+    private HashMap<String, Double> initConstants(double[] constants) {
+        HashMap<String, Double> constToReturn = new HashMap<>();
+
         for (int i = 0; i < constants.length; i++) {
-            testConst.put(constantKeys[i], constants[i]);
+            constToReturn.put(constantKeys[i], constants[i]);
         }
+
+        return constToReturn;
     }
 
     //constructor initialization helper (also generates function values to test)
@@ -391,7 +415,7 @@ class FunctionTest {
     //testToJson() helper
     private void helperTestToJson(String name, double[] consts, double left, double right) {
         //initialize Function object
-        initConstants(consts);
+        testConst = initConstants(consts);
         helperConstructorInit(Function.TYPE_POLY, left, right);
         Function func = new Function(testType, testConst, testDomain);
 
