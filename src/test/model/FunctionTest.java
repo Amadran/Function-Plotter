@@ -199,6 +199,90 @@ class FunctionTest {
         helperTestToJson("testFunction", consts, -2.4, 2.4);
     }
 
+    @Test
+    public void testEqualsSameObject() {
+        double[] consts = {2.0, 2.0, 3.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+
+        //test
+        Function func = new Function(testType, testConst, testDomain);
+
+        //check
+        assertTrue(func.equals(func));
+    }
+
+    @Test
+    public void testEqualsNull() {
+        double[] consts = {2.0, 2.0, 3.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+
+        //test
+        Function func = new Function(testType, testConst, testDomain);
+
+        //check
+        assertFalse(func.equals(null));
+    }
+
+    @Test
+    public void testEqualsDifferentObject() {
+        double[] consts = {2.0, 2.0, 3.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+
+        //test
+        Function func = new Function(testType, testConst, testDomain);
+        Object object = new Object();
+
+        //check
+        assertFalse(func.equals(object));
+    }
+
+    @Test
+    public void testEqualsEquivalentObjects() {
+        double[] consts = {2.0, 2.0, 3.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+
+        //test
+        Function func = new Function(testType, testConst, testDomain);
+        Function otherFunc = new Function(testType, testConst, testDomain);
+
+        //check
+        assertTrue(func.equals(otherFunc));
+    }
+
+    @Test
+    public void testHashCodeEqualObjects() {
+        double[] consts = {2.0, 2.0, 3.0};
+        initConstants(consts);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+
+        //test
+        Function func = new Function(testType, testConst, testDomain);
+        Function otherFunc = new Function(testType, testConst, testDomain);
+
+        //check
+        assertEquals(otherFunc.hashCode(), func.hashCode());
+    }
+
+    @Test
+    public void testHashCodeNotEqualObjects() {
+        double[] consts1 = {2.0, 2.0, 3.0};
+        initConstants(consts1);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+        Function func = new Function(testType, testConst, testDomain);
+
+        double[] consts2 = {-2.0, 1.5, 3.0};
+        initConstants(consts2);
+        helperConstructorInit(Function.TYPE_EXP, -2.0, 2.0);
+        Function otherFunc = new Function(testType, testConst, testDomain);
+
+        //check
+        assertNotEquals(otherFunc.hashCode(), func.hashCode());
+    }
+
     //~~~~~~~~~~~~~~~~HELPERS~~~~~~~~~~~~~~~~~
 
     //constants helper

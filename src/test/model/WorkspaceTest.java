@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WorkspaceTest {
     private Workspace workspace;
@@ -31,7 +30,7 @@ public class WorkspaceTest {
         //init
         double[] constants = {2.0, -1.5, 0.5};
         String funcName = "test func";
-        Function func = helperAddFunction(funcName, Function.TYPE_EXP, -3.0, 3.0, constants);
+        Function func = helperAddFunction(workspace, funcName, Function.TYPE_EXP, -3.0, 3.0, constants);
 
         //check
         assertEquals(1, workspace.getFunctionListLength());
@@ -43,7 +42,7 @@ public class WorkspaceTest {
         //create 3 functions
         HashMap<String, Function> functions = new HashMap<>();
         String[] funcNames = {"func1", "func2", "func3"};
-        helperInitMultipleFunctions(functions, funcNames); //functions are defined inside this method
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
 
         //check that workspace contains all 3 functions
         assertEquals(3, workspace.getFunctionListLength());
@@ -60,7 +59,7 @@ public class WorkspaceTest {
         //repeat adding function in testAddFunctionOne
         double[] constants = {2.0, -1.5, 0.5};
         String funcName = "test func";
-        Function func = helperAddFunction(funcName, Function.TYPE_EXP, -3.0, 3.0, constants);
+        Function func = helperAddFunction(workspace, funcName, Function.TYPE_EXP, -3.0, 3.0, constants);
         //        ^ not used, but keeping it for consistency with multiple function test
 
         //remove function
@@ -74,7 +73,7 @@ public class WorkspaceTest {
         //create 3 functions
         HashMap<String, Function> functions = new HashMap<>();
         String[] funcNames = {"func1", "func2", "func3"};
-        helperInitMultipleFunctions(functions, funcNames); //functions are defined inside this method
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
 
         //remove function
         workspace.removeFunction(funcNames[1]);
@@ -89,7 +88,7 @@ public class WorkspaceTest {
         //initialize 3 functions
         HashMap<String, Function> functions = new HashMap<>();
         String[] funcNames = {"func1", "func2", "func3"};
-        helperInitMultipleFunctions(functions, funcNames); //functions are defined inside this method
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
 
         //initialize expected JSONObject and JSONArray
         JSONObject expectedJson = new JSONObject();
@@ -105,6 +104,91 @@ public class WorkspaceTest {
         }
     }
 
+    @Test
+    public void testEqualsSameObject() {
+        //initialize 3 functions
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
+
+        //check
+        assertTrue(workspace.equals(workspace));
+    }
+
+    @Test
+    public void testEqualsNull() {
+        //initialize 3 functions
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
+
+        //check
+        assertFalse(workspace.equals(null));
+    }
+
+    @Test
+    public void testEqualsDifferentObject() {
+        //initialize 3 functions
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
+
+        Object object = new Object();
+
+        //check
+        assertFalse(workspace.equals(object));
+    }
+
+    @Test
+    public void testEqualsEquivalentObjects() {
+        //initialize 3 functions for this
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
+
+        //initialize 3 functions for otherWorkspace
+        HashMap<String, Function> otherFunctions = new HashMap<>();
+        String[] otherFuncNames = {"func1", "func2", "func3"};
+        Workspace otherWorkspace = new Workspace();
+        helperInitMultipleFunctions(otherWorkspace, otherFunctions, otherFuncNames); //functions are defined inside this method
+
+        assertTrue(workspace.equals(otherWorkspace));
+    }
+
+    @Test
+    public void testHashCodeEqualObjects() {
+        //initialize 3 functions for this
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
+
+        //initialize 3 functions for otherWorkspace
+        HashMap<String, Function> otherFunctions = new HashMap<>();
+        String[] otherFuncNames = {"func1", "func2", "func3"};
+        Workspace otherWorkspace = new Workspace();
+        helperInitMultipleFunctions(otherWorkspace, otherFunctions, otherFuncNames); //functions are defined inside this method
+
+        //check
+        assertEquals(otherWorkspace.hashCode(), workspace.hashCode());
+    }
+
+    @Test
+    public void testHashCodeNotEqualObjects() {
+        //initialize 3 functions for this
+        HashMap<String, Function> functions = new HashMap<>();
+        String[] funcNames = {"func1", "func2", "func3"};
+        helperInitMultipleFunctions(workspace, functions, funcNames); //functions are defined inside this method
+
+        //initialize 3 functions for otherWorkspace
+        HashMap<String, Function> otherFunctions = new HashMap<>();
+        String[] otherFuncNames = {"func1", "func2", "func3"};
+        Workspace otherWorkspace = new Workspace();
+        helperInitMultipleOtherFunctions(otherWorkspace, otherFunctions, otherFuncNames); //functions are defined inside this method
+
+        //check
+        assertNotEquals(otherWorkspace.hashCode(), workspace.hashCode());
+    }
+
     //~~~~~~~~~~~~~HELPERS~~~~~~~~~~~~~
 
     //constants helper
@@ -115,7 +199,7 @@ public class WorkspaceTest {
     }
 
     //addFunction helper
-    private Function helperAddFunction(String name, String type, double left, double right, double[] constArray) {
+    private Function helperAddFunction(Workspace workspace, String name, String type, double left, double right, double[] constArray) {
         //initialize constants and domain of function to add
         HashMap<String, Double> constants = new HashMap<>();
         List<Double> domain = new ArrayList<>();
@@ -152,20 +236,20 @@ public class WorkspaceTest {
     }
 
     //helper to create 3 functions at once (define them inside here)
-    private void helperInitMultipleFunctions(HashMap<String, Function> functions, String[] names) {
+    private void helperInitMultipleFunctions(Workspace workspace, HashMap<String, Function> functions, String[] names) {
         //function 1
         double[] constants1 = {2.0, -1.0, -0.5};
-        Function func1 = helperAddFunction(names[0], Function.TYPE_EXP, -3.0, 3.0, constants1);
+        Function func1 = helperAddFunction(workspace, names[0], Function.TYPE_EXP, -3.0, 3.0, constants1);
         functions.put(names[0], func1); //"functions" list comes in empty
 
         //function 2
         double[] constants2 = {-1.5, 2.5};
-        Function func2 = helperAddFunction(names[1], Function.TYPE_LINEAR, -3.0, 3.0, constants2);
+        Function func2 = helperAddFunction(workspace, names[1], Function.TYPE_LINEAR, -3.0, 3.0, constants2);
         functions.put(names[1], func2);
 
         //function 3
         double[] constants3 = {-1.5, 2.5, -0.5, -2.0, 1.0, -2.5, 0.5};
-        Function func3 = helperAddFunction(names[2], Function.TYPE_TRIG, -3.0, 3.0, constants3);
+        Function func3 = helperAddFunction(workspace, names[2], Function.TYPE_TRIG, -3.0, 3.0, constants3);
         functions.put(names[2], func3);
     }
 
@@ -181,5 +265,24 @@ public class WorkspaceTest {
             expectedJsonFuncArray.put(funcJson);
         }
         expectedJson.put("functionList", expectedJsonFuncArray);
+    }
+
+    //helper to create 3 functions at once (define them inside here; functions are different from those in
+    // helperInitMultipleFunctions() for the purpose of testing hashCode())
+    private void helperInitMultipleOtherFunctions(Workspace workspace, HashMap<String, Function> functions, String[] names) {
+        //function 1
+        double[] constants1 = {2.5, -1.0, -0.5};
+        Function func1 = helperAddFunction(workspace, names[0], Function.TYPE_EXP, -3.0, 3.0, constants1);
+        functions.put(names[0], func1); //"functions" list comes in empty
+
+        //function 2
+        double[] constants2 = {-1.5, -0.5};
+        Function func2 = helperAddFunction(workspace, names[1], Function.TYPE_LINEAR, -3.0, 3.0, constants2);
+        functions.put(names[1], func2);
+
+        //function 3
+        double[] constants3 = {-1.5, 2.5, 0.5, -2.0, 1.0, 2.5, 0.5};
+        Function func3 = helperAddFunction(workspace, names[2], Function.TYPE_TRIG, -3.0, 3.0, constants3);
+        functions.put(names[2], func3);
     }
 }
