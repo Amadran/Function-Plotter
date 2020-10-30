@@ -254,6 +254,22 @@ class FunctionTest {
     }
 
     @Test
+    public void testEqualsNotEqualObjects() {
+        double[] consts1 = {2.0, 2.0, 3.0};
+        initConstants(consts1);
+        helperConstructorInit(Function.TYPE_EXP, -3.0, 3.0);
+        Function func = new Function(testType, testConst, testDomain);
+
+        double[] consts2 = {-2.0, 1.5, 3.0};
+        initConstants(consts2);
+        helperConstructorInit(Function.TYPE_EXP, -2.0, 2.0);
+        Function otherFunc = new Function(testType, testConst, testDomain);
+
+        //check
+        assertFalse(func.equals(otherFunc));
+    }
+
+    @Test
     public void testHashCodeEqualObjects() {
         double[] consts = {2.0, 2.0, 3.0};
         initConstants(consts);
