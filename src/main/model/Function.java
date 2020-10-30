@@ -182,6 +182,8 @@ public class Function {
 
     @Override
     // EFFECTS: returns true if this and o are equal by each field, false otherwise
+    //*** does not need to check valuesX and valuesY, as these are completely determined
+    //*** by functionType, constants, and domain, (and DELTA, which is a static constant anyway)
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -191,9 +193,7 @@ public class Function {
             Function function = (Function) o;
             return functionType.equals(function.functionType)
                     && constants.equals(function.constants)
-                    && domain.equals(function.domain)
-                    && valuesY.equals(function.valuesY)
-                    && valuesX.equals(function.valuesX);
+                    && domain.equals(function.domain);
         }
     }
 

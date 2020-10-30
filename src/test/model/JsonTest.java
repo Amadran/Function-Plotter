@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 //contains toJson testing code common to FunctionTest and WorkspaceTest
 public class JsonTest {
 
+    //helper method to initialize a JSONObject representing a Function object
     public static void helperInitJsonObject(JSONObject json, String name, String type,
                                             HashMap<String, Double> constants, List<Double> domain,
                                             List<Double> valuesX, List<Double> valuesY) {

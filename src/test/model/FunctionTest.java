@@ -240,27 +240,7 @@ class FunctionTest {
     }
 
     @Test
-    public void testEqualsEquivalentObjects() {
-        double[] consts1 = {2.0, 2.0};
-        HashMap<String, Double> constants1 = initConstants(consts1);
-        ArrayList<Double> domain1 = new ArrayList<>();
-        domain1.add(-2.5);
-        domain1.add(2.5);
-        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
-
-        double[] consts2 = {2.0, 2.0};
-        HashMap<String, Double> constants2 = initConstants(consts2);
-        ArrayList<Double> domain2 = new ArrayList<>();
-        domain2.add(-2.5);
-        domain2.add(2.5);
-        Function func2 = new Function(Function.TYPE_LINEAR, constants2, domain2);
-
-        //check
-        assertTrue(func2.equals(func1));
-    }
-
-    @Test
-    public void testEqualsNotEqualObjects() {
+    public void testEqualsNoFieldsEqual() {
         double[] consts1 = {2.0, 2.0};
         HashMap<String, Double> constants1 = initConstants(consts1);
         ArrayList<Double> domain1 = new ArrayList<>();
@@ -277,6 +257,148 @@ class FunctionTest {
 
         //check
         assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    public void testEqualsDomainsEqual() {
+        double[] consts1 = {2.0, 2.0};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
+
+        double[] consts2 = {1.53, -0.24, 0.8};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(-2.5);
+        domain2.add(2.5);
+        Function func2 = new Function(Function.TYPE_EXP, constants2, domain2);
+
+        //check
+        assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    //happens to be possible with TYPE_EXP and TYPE_LOG, as they have the same number of constants,
+    //but in general this case should be impossible and hence not considered (not sure how to do that in equals())
+    public void testEqualsConstantsEqual() {
+        double[] consts1 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_EXP, constants1, domain1);
+
+        double[] consts2 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(0.2);
+        domain2.add(2.2);
+        Function func2 = new Function(Function.TYPE_LOG, constants2, domain2);
+
+        //check
+        assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    public void testEqualsConstantsAndDomainsEqual() {
+        double[] consts1 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(0.2);
+        domain1.add(2.2);
+        Function func1 = new Function(Function.TYPE_EXP, constants1, domain1);
+
+        double[] consts2 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(0.2);
+        domain2.add(2.2);
+        Function func2 = new Function(Function.TYPE_LOG, constants2, domain2);
+
+        //check
+        assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    public void testEqualsTypesEqual() {
+        double[] consts1 = {2.97, 1.2352, 0.4532};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(0.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_EXP, constants1, domain1);
+
+        double[] consts2 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(0.2);
+        domain2.add(2.2);
+        Function func2 = new Function(Function.TYPE_EXP, constants2, domain2);
+
+        //check
+        assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    public void testEqualsTypesAndDomainsEqual() {
+        double[] consts1 = {2.97, 1.2352, 0.4532};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(0.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_EXP, constants1, domain1);
+
+        double[] consts2 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(0.5);
+        domain2.add(2.5);
+        Function func2 = new Function(Function.TYPE_EXP, constants2, domain2);
+
+        //check
+        assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    public void testEqualsTypesAndConstantsEqual() {
+        double[] consts1 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(0.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_EXP, constants1, domain1);
+
+        double[] consts2 = {2.0, -2.5, 0.43};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(0.3);
+        domain2.add(2.3);
+        Function func2 = new Function(Function.TYPE_EXP, constants2, domain2);
+
+        //check
+        assertFalse(func2.equals(func1));
+    }
+
+    @Test
+    public void testEqualsAllFieldsEqual() {
+        double[] consts1 = {2.0, 2.0};
+        HashMap<String, Double> constants1 = initConstants(consts1);
+        ArrayList<Double> domain1 = new ArrayList<>();
+        domain1.add(-2.5);
+        domain1.add(2.5);
+        Function func1 = new Function(Function.TYPE_LINEAR, constants1, domain1);
+
+        double[] consts2 = {2.0, 2.0};
+        HashMap<String, Double> constants2 = initConstants(consts2);
+        ArrayList<Double> domain2 = new ArrayList<>();
+        domain2.add(-2.5);
+        domain2.add(2.5);
+        Function func2 = new Function(Function.TYPE_LINEAR, constants2, domain2);
+
+        //check
+        assertTrue(func2.equals(func1));
     }
 
     @Test
