@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 //User interface for function plotting program, which uses the methods available to Workspace and Function
 //to output relevant information
-public class FunctionPlotter {
+public class FunctionPlotterConsoleApp {
     // NUMBER_OF_CONSTANTS_FOR_TYPE: number of constants that the UI should wait for when defineFunctionConstants
     // is running, since it is different for each function type
     private static final HashMap<String, Integer> NUMBER_OF_CONSTANTS_FOR_TYPE = new HashMap<>();
@@ -32,7 +32,7 @@ public class FunctionPlotter {
     // MODIFIES: this, Function
     // EFFECTS: initializes workspace (Workspace object), input (Scanner object), and
     //          NUMBER_OF_CONSTANTS_FOR_TYPE, as well as starting the user interface
-    public FunctionPlotter() {
+    public FunctionPlotterConsoleApp() {
         initNumberOfConstantsForType();
         workspace = new Workspace();
         input = new Scanner(System.in);
