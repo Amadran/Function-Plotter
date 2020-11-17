@@ -21,7 +21,6 @@ public class Function {
     public static final String TYPE_TRIG = "trigonometric";
     public static final String TYPE_LOG = "logarithmic";
     public static final String[] CONSTANT_NAMES = {"a","b","c","d","e","f","g"};
-    private static final int HASH_MULTIPLIER = 73; //prime number used for hashCode()
     private static final HashMap<String, Integer> NUMBER_OF_CONSTANTS_FOR_TYPE = new HashMap<>();
 
     private final String functionType;

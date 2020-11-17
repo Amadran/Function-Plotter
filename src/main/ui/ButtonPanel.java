@@ -1,16 +1,23 @@
 package ui;
 
+import ui.subwindow.AddFunctionWindow;
+import ui.subwindow.RemoveFunctionWindow;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
-// The panel containing all the buttons of this program's GUI
+// Panel containing all the buttons of the GUI
+// ***CITATION: I learned the basics of various Swing components from the YouTube channel "Bro Code"
+// https://www.youtube.com/channel/UC4SVo0Ue36XCfOyb5Lh1viQ, as well as from Oracle Java Swing tutorials
+// https://docs.oracle.com/javase/tutorial/uiswing/index.html
 public class ButtonPanel extends JPanel implements ActionListener {
     public static final int WIDTH = FunctionListPanel.WIDTH;
     public static final int HEIGHT = CanvasPanel.HEIGHT - FunctionListPanel.HEIGHT;
 
-    private FunctionPlotterGUI mainFrame; // so information can be sent back up to the parent JFrame
+    private FunctionPlotterGUI mainFrame; //so information can be sent back up to FunctionPlotterGUI (JFrame)
     private JButton addFuncButton;
     private JButton removeFuncButton;
     private JButton evalFuncButton;
@@ -18,8 +25,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
     private JButton loadButton;
     private JButton quitButton;
 
-    // REQUIRES: main must be the parent JFrame
-    // EFFECTS: sets up this' properties and all of its JButton's
+    // REQUIRES: main must be the parent FunctionPlotterGUI object
+    // EFFECTS: sets up ButtonPanel and its buttons
     public ButtonPanel(FunctionPlotterGUI main) {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(new Color(142, 213, 165));
@@ -30,8 +37,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
     }
 
     // MODIFIES: this
-    // EFFECTS: initializes all the buttons contained in this panel
-    public void initializeButtons() {
+    // EFFECTS: initializes all the buttons contained in ButtonPanel
+    private void initializeButtons() {
         instantiateAllButtons();
         addAllActionListeners();
         setAllNotFocusable();
@@ -40,7 +47,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
 
     // MODIFIES: this
     // EFFECTS: instantiates all the buttons
-    public void instantiateAllButtons() {
+    private void instantiateAllButtons() {
         addFuncButton = new JButton("Add Function");
         removeFuncButton = new JButton("Remove Function");
         evalFuncButton = new JButton("Evaluate Function");
@@ -51,7 +58,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
 
     // MODIFIES: this
     // EFFECTS: adds this as action listener to all the buttons
-    public void addAllActionListeners() {
+    private void addAllActionListeners() {
         addFuncButton.addActionListener(this);
         removeFuncButton.addActionListener(this);
         evalFuncButton.addActionListener(this);
@@ -62,7 +69,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
 
     // MODIFIES: this
     // EFFECTS: sets all buttons to not focusable
-    public void setAllNotFocusable() {
+    private void setAllNotFocusable() {
         addFuncButton.setFocusable(false);
         removeFuncButton.setFocusable(false);
         evalFuncButton.setFocusable(false);
@@ -73,7 +80,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
 
     // MODIFIES: this
     // EFFECTS: adds all the buttons to this
-    public void addAllButtonsToPanel() {
+    private void addAllButtonsToPanel() {
         add(addFuncButton);
         add(removeFuncButton);
         add(evalFuncButton);
@@ -83,16 +90,21 @@ public class ButtonPanel extends JPanel implements ActionListener {
     }
 
     @Override
+    // EFFECTS: performs the relevant actions for each button
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addFuncButton) {
             System.out.println("add");
+            new AddFunctionWindow(mainFrame);
         } else if (e.getSource() == removeFuncButton) {
             System.out.println("remove");
+            new RemoveFunctionWindow(mainFrame, mainFrame.getFunctionNames());
         } else if (e.getSource() == evalFuncButton) {
             System.out.println("evaluate");
         } else if (e.getSource() == saveButton) {
+            mainFrame.saveWorkspace();
             System.out.println("save");
         } else if (e.getSource() == loadButton) {
+            mainFrame.loadWorkspace();
             System.out.println("load");
         } else if (e.getSource() == quitButton) {
             System.out.println("quit");

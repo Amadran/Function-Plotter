@@ -1,23 +1,28 @@
 package ui;
 
+import model.Function;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-// The scroll-able panel that contains all of the textual information related to each
-// Function object in the Workspace
+// Scroll-able panel that contains a list of all the information related to each
+// function in the workspace and displays them
+// ***CITATION: I learned the basics of various Swing components from the YouTube channel "Bro Code"
+// https://www.youtube.com/channel/UC4SVo0Ue36XCfOyb5Lh1viQ, as well as from Oracle Java Swing tutorials
+// https://docs.oracle.com/javase/tutorial/uiswing/index.html
 public class FunctionListPanel extends JScrollPane {
     public static final int WIDTH = FunctionLabel.WIDTH;
     public static final int HEIGHT = 350;
     public static final int SCROLL_BAR_SENSITIVITY = 6; // in pixels
 
-    private JPanel internalPanel; //JScrollPane is a container, so it needs a component as a child
+    private JPanel internalPanel; //internal panel of JScrollPane
     private List<FunctionLabel> funcLabels;
 
-    // EFFECTS: sets up underlying JScrollPane properties and the sub-labels, which each contain
-    //          the information for each Function object (see FunctionLabel.java)
+    // EFFECTS: sets up this (which is a JScrollPane) and sub-labels, which each contain
+    //          the information for each function (see FunctionLabel.java)
     public FunctionListPanel() {
         setupInternalPanel();
         getVerticalScrollBar().setUnitIncrement(SCROLL_BAR_SENSITIVITY);
@@ -26,32 +31,63 @@ public class FunctionListPanel extends JScrollPane {
         funcLabels = new ArrayList<>();
 
         //TEST
-        testLabels();
+        //testLabels();
         //TEST
     }
 
     // MODIFIES: this
     // EFFECTS: sets up the internal panel contained by FunctionListPanel (which is a JScrollPane)
-    public void setupInternalPanel() {
+    private void setupInternalPanel() {
         internalPanel = new JPanel();
+        internalPanel.setLayout(new FlowLayout());
         internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.PAGE_AXIS));
         setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         setViewportView(internalPanel);
     }
 
+    // REQUIRES: name must not be an empty string, same REQUIRES as Function constructor
     // MODIFIES: this, FunctionLabel
-    // EFFECTS: forwards information contained in each FunctionLabel directly them via FunctionLabel.setFields()
-    public void setFuncLabelFields(String name, String expression, String type, List<Double> domain,
-                                   HashMap<String, Double> constants) {
+    // EFFECTS: creates new FunctionLabel with a name, function type, domain, and constants
+    public void addNewFuncLabel(String name, String type, List<Double> domain,
+                                HashMap<String, Double> constants) {
+        FunctionLabel funcLabel = new FunctionLabel(name, type, domain, constants);
+        funcLabels.add(funcLabel);
+        internalPanel.add(funcLabel);
+        internalPanel.revalidate();
+    }
+
+    // REQUIRES: name must not be an empty string
+    // MODIFIES: this, FunctionLabel
+    // EFFECTS: creates new FunctionLabel with a name and function object directly
+    public void addNewFuncLabel(String name, Function function) {
+        FunctionLabel funcLabel = new FunctionLabel(name, function.getFunctionType(),
+                function.getDomain(), function.getConstants());
+        funcLabels.add(funcLabel);
+        internalPanel.add(funcLabel);
+        internalPanel.revalidate();
+    }
+
+    // REQUIRES: "name" Function object exists in funcLabels
+    // MODIFIES: this, FunctionLabel
+    // EFFECTS: removes the function label from this
+    public void removeFuncLabel(String name) {
+        FunctionLabel labelToRemove = null;
         for (FunctionLabel label : funcLabels) {
-            label.setFields(name, expression, type, domain, constants);
-            add(label);
+            if (label.getFunctionName().equals(name)) {
+                labelToRemove = label;
+            }
         }
+
+        // have to perform the deletion outside of the loop,
+        // otherwise it causes a ConcurrentModificationException
+        funcLabels.remove(labelToRemove);
+        internalPanel.remove(labelToRemove);
+        internalPanel.revalidate();
     }
 
     //TEST
-    public void testLabels() {
+    private void testLabels() {
         JTextArea label1 = new JTextArea("text 1 \nsdfsafsadfsadfa");
         label1.setPreferredSize(new Dimension(200, 100));
         label1.setEditable(false);
