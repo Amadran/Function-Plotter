@@ -66,7 +66,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         NUMBER_OF_CONSTANTS_FOR_TYPE.put(Function.TYPE_LOG, 3);
     }
 
-    // EFFECTS: returns the highest int value in a string -> integer hashMap
+    // EFFECTS: returns the highest int value in a (string -> integer) hashMap
     private int hashMapMaxValue(HashMap<String, Integer> hashMap) {
         int max = 0;
         for (String key : hashMap.keySet()) {
@@ -77,7 +77,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         return max;
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, framePanel, namePanel, typePanel, domainPanel, constantsPanel, submitPanel
     // EFFECTS: initializes all of the sub-panels of this sub-window
     private void initializePanels() {
         framePanel = new JPanel();
@@ -89,7 +89,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         initializeSubmitPanel();
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, namePanel, framePanel
     // EFFECTS: initializes the panel that handles specifying the name for the function
     private void initializeNamePanel() {
         namePanel = new JPanel();
@@ -104,7 +104,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(namePanel);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, typePanel, typePanelComboBox, framePanel
     // EFFECTS: initializes the panel that handles specifying the type for the function
     private void initializeTypePanel() {
         typePanel = new JPanel();
@@ -120,14 +120,16 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(typePanel);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, domainPanel, framePanel
     // EFFECTS: initializes the panel that handles specifying the domain for the function
     private void initializeDomainPanel() {
         domainPanel = new JPanel();
         domainPanel.add(new JLabel("Domain:"));
         JTextField leftBoundary = new JTextField("-2.0");
+        leftBoundary.setEditable(false);
         leftBoundary.setPreferredSize(new Dimension(SUB_FIELD_WIDTH, SUB_FIELD_HEIGHT));
         JTextField rightBoundary = new JTextField("2.0");
+        rightBoundary.setEditable(false);
         rightBoundary.setPreferredSize(new Dimension(SUB_FIELD_WIDTH, SUB_FIELD_HEIGHT));
 
         domainPanel.add(leftBoundary);
@@ -138,7 +140,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(domainPanel);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, constantsLabel, constantsPanel, framePanel
     // EFFECTS: initializes the panel that handles specifying the constants for the function
     private void initializeConstantsPanel() {
         int maxNumOfConstants = hashMapMaxValue(NUMBER_OF_CONSTANTS_FOR_TYPE);
@@ -166,7 +168,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(constantsPanel);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, submitPanel, submitButton, framePanel
     // EFFECTS: initializes the panel that contains the submit button
     private void initializeSubmitPanel() {
         submitPanel = new JPanel();
@@ -178,7 +180,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
     }
 
     // REQUIRES: numConstants is one of the values in NUMBER_OF_CONSTANTS_FOR_TYPE
-    // MODIFIES: this
+    // MODIFIES: this, constantsPanel
     // EFFECTS: hides all the constant-specifying fields numbered after numConstants
     private void hideConstantFields(int numConstants) {
         int maxNumConstants = hashMapMaxValue(NUMBER_OF_CONSTANTS_FOR_TYPE);
@@ -192,13 +194,13 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         }
     }
 
-    // MODIFIES: this
-    // EFFECTS: initializes the panel that handles specifying the domain for the function
+    // REQUIRES: numConstants is one of the values in NUMBER_OF_CONSTANTS_FOR_TYPE
+    // EFFECTS: gets constants from the fields in constantsPanel, returns hashmap of them
     private HashMap<String, Double> getConstants(int numConstants) {
         HashMap<String, Double> constants = new HashMap<>();
         Component[] comps = constantsPanel.getComponents();
 
-        //index 0 is a label, all subpanels are indices 1 to numConstants (which has a max of
+        //index 0 is a label, all sub-panels are indices 1 to numConstants (which has a max of
         //hashMapMaxValue(NUMBER_OF_CONSTANTS_FOR_TYPE) == 7 currently)
         for (int i = 1; i <= numConstants; i++) {
             JPanel constantsSubPanel = (JPanel) comps[i];
@@ -210,6 +212,9 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
     }
 
     @Override
+    // MODIFIES: this, constantsPanel, workspace, funcListPanel, canvasPanel, FunctionLabel
+    // EFFECTS: hides extra constants fields for typePanelComboBox on type change, and submits the
+    //          information on click of submitButton for a new function to be added
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == typePanelComboBox) {
             String selectedItem = typePanelComboBox.getSelectedItem().toString();

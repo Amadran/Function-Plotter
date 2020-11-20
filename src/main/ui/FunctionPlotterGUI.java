@@ -27,17 +27,16 @@ public class FunctionPlotterGUI extends JFrame {
         super("Function Plotter");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setResizable(false);
         workspace = new Workspace();
         fileHandler = new WorkspaceFileHandler(this);
         initializePanels();
-
         pack();
         setLocationRelativeTo(null);
-        //setResizable(false);
         setVisible(true);
     }
 
-    // MODIFIES: this, CanvasPanel, FunctionListPanel, ButtonPanel
+    // MODIFIES: this, canvasPanel, funcListPanel, buttonPanel, optionsPanel
     // EFFECTS: initializes the all the sub-panels
     private void initializePanels() {
         //initialize each panel
@@ -58,32 +57,41 @@ public class FunctionPlotterGUI extends JFrame {
     }
 
     // REQUIRES: name must not be an empty string, same REQUIRES as Function constructor
-    // MODIFIES: this, FunctionListPanel
+    // MODIFIES: this, workspace, funcListPanel, canvasPanel
     // EFFECTS: adds a Function to the workspace and the funcListPanel
     public void addFunction(String name, String type, HashMap<String, Double> constants, List<Double> domain) {
         workspace.addFunction(new Function(type, constants, domain), name);
         funcListPanel.addNewFuncLabel(name, type, domain, constants);
+        canvasPanel.repaint();
     }
 
     // REQUIRES: "name" Function object exists in FunctionListPanel.funcLabels
-    // MODIFIES: this, FunctionListPanel
+    // MODIFIES: this, workspace, funcListPanel, canvasPanel, FunctionLabel
     // EFFECTS: removes function from workspace and funcListPanel
     public void removeFunction(String name) {
         workspace.removeFunction(name);
         funcListPanel.removeFuncLabel(name);
+        canvasPanel.repaint();
     }
 
+    // MODIFIES: this, fileHandler, JsonWriter
+    // EFFECTS: saves the current workspace to file
     public void saveWorkspace() {
         fileHandler.saveFile(workspace);
     }
 
+    // MODIFIES: this, fileHandler, workspace, JsonReader, funcListPanel, canvasPanel
+    // EFFECTS: loads a workspace from file
     public void loadWorkspace() {
-        fileHandler.loadFile(workspace);
+        int option = fileHandler.loadFile(workspace);
         HashMap<String, Function> functions = workspace.getFunctionList();
 
-        for (String funcName : functions.keySet()) {
-            Function func = functions.get(funcName);
-            funcListPanel.addNewFuncLabel(funcName, func);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            for (String funcName : functions.keySet()) {
+                Function func = functions.get(funcName);
+                funcListPanel.addNewFuncLabel(funcName, func);
+            }
+            canvasPanel.repaint();
         }
     }
 

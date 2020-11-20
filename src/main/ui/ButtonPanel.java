@@ -7,9 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
-// Panel containing all the buttons of the GUI
+// Panel containing all the buttons of the main GUI window
 // ***CITATION: I learned the basics of various Swing components from the YouTube channel "Bro Code"
 // https://www.youtube.com/channel/UC4SVo0Ue36XCfOyb5Lh1viQ, as well as from Oracle Java Swing tutorials
 // https://docs.oracle.com/javase/tutorial/uiswing/index.html
@@ -36,7 +35,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
         mainFrame = main;
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, all buttons that are fields
     // EFFECTS: initializes all the buttons contained in ButtonPanel
     private void initializeButtons() {
         instantiateAllButtons();
@@ -45,7 +44,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
         addAllButtonsToPanel();
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, all buttons that are fields
     // EFFECTS: instantiates all the buttons
     private void instantiateAllButtons() {
         addFuncButton = new JButton("Add Function");
@@ -56,7 +55,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
         quitButton = new JButton("Quit");
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, all buttons that are fields
     // EFFECTS: adds this as action listener to all the buttons
     private void addAllActionListeners() {
         addFuncButton.addActionListener(this);
@@ -67,7 +66,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
         quitButton.addActionListener(this);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, all buttons that are fields
     // EFFECTS: sets all buttons to not focusable
     private void setAllNotFocusable() {
         addFuncButton.setFocusable(false);
@@ -78,8 +77,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
         quitButton.setFocusable(false);
     }
 
-    // MODIFIES: this
-    // EFFECTS: adds all the buttons to this
+    // MODIFIES: this, all buttons that are fields
+    // EFFECTS: adds all the buttons to this panel
     private void addAllButtonsToPanel() {
         add(addFuncButton);
         add(removeFuncButton);
@@ -90,6 +89,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
     }
 
     @Override
+    // MODIFIES: AddFunctionWindow, RemoveFunctionWindow, mainFrame
     // EFFECTS: performs the relevant actions for each button
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addFuncButton) {
@@ -108,6 +108,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
             System.out.println("load");
         } else if (e.getSource() == quitButton) {
             System.out.println("quit");
+            System.exit(0);
         }
     }
 }

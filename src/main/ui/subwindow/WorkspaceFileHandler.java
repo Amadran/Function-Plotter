@@ -14,45 +14,57 @@ import java.util.HashMap;
 
 // Opens up a JFileChooser dialog window to load or save the workspace to/from file,
 // and handles the loading/saving
+// ***CITATION: I learned the basics of various Swing components from the YouTube channel "Bro Code"
+// https://www.youtube.com/channel/UC4SVo0Ue36XCfOyb5Lh1viQ, as well as from Oracle Java Swing tutorials
+// https://docs.oracle.com/javase/tutorial/uiswing/index.html
 public class WorkspaceFileHandler extends JFileChooser {
     private FunctionPlotterGUI mainFrame;
 
+
+    // REQUIRES: main is the main GUI JFrame (FunctionPlotterGUI)
+    // EFFECTS: sets mainFrame and other inherited properties
     public WorkspaceFileHandler(FunctionPlotterGUI main) {
         mainFrame = main;
         setFileSelectionMode(JFileChooser.FILES_ONLY);
     }
 
+    // REQUIRES: workspace is the active workspace of the main JFrame
+    // MODIFIES: this, writer
+    // EFFECTS: saves the current workspace to a json file
     public void saveFile(Workspace workspace) {
         JsonWriter writer;
-        int val = showSaveDialog(mainFrame);
+        int option = showSaveDialog(mainFrame);
 
-        if (val == JFileChooser.APPROVE_OPTION) {
+        if (option == JFileChooser.APPROVE_OPTION) {
             File file = getSelectedFile();
-            writer = new JsonWriter("./data/" + file.getName());
+            writer = new JsonWriter(file.getAbsolutePath());
 
             try {
                 writer.open();
                 writer.write(workspace);
                 writer.close();
-                System.out.println("File saved to './data/" + file.getName() + "'");
+                System.out.println("File saved to '" + file.getAbsolutePath() + "'");
             } catch (FileNotFoundException e) {
                 System.out.println("File could not be opened for writing\n");
             }
         }
     }
 
-    public void loadFile(Workspace workspace) {
+    // REQUIRES: workspace is the active workspace of the main JFrame
+    // MODIFIES: this, reader, workspace
+    // EFFECTS: loads a workspace from a json file into "workspace"
+    public int loadFile(Workspace workspace) {
         JsonReader reader;
         Workspace tempWorkspace;
-        int val = showOpenDialog(mainFrame);
+        int option = showOpenDialog(mainFrame);
 
-        if (val == JFileChooser.APPROVE_OPTION) {
+        if (option == JFileChooser.APPROVE_OPTION) {
             File file = getSelectedFile();
-            reader = new JsonReader("./data/" + file.getName());
+            reader = new JsonReader(file.getAbsolutePath());
 
             try {
                 tempWorkspace = reader.read();
-                System.out.println("File './data/" + file.getName() + ".json' loaded");
+                System.out.println("File '" + file.getAbsolutePath() + "' loaded");
 
                 HashMap<String, Function> functions = tempWorkspace.getFunctionList();
                 for (String funcName : functions.keySet()) {
@@ -62,5 +74,6 @@ public class WorkspaceFileHandler extends JFileChooser {
                 System.out.println("File could not be opened for reading\nMake sure the file exists");
             }
         }
+        return option;
     }
 }

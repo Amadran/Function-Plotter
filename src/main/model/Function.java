@@ -14,7 +14,7 @@ import static java.lang.Math.*;
 // Represents an individual mathematical function, containing information
 // on it's definition and containing the capability to return x and y values
 public class Function {
-    public static final double DELTA = 0.25; //x-value spacing
+    public static final double DELTA = 0.01; //x-value spacing
     public static final String TYPE_LINEAR = "linear";
     public static final String TYPE_POLY = "polynomial";
     public static final String TYPE_EXP = "exponential";
