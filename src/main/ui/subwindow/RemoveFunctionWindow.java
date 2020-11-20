@@ -45,7 +45,7 @@ public class RemoveFunctionWindow extends JFrame implements ActionListener {
     }
 
     // REQUIRES: funcNames are function names in the active workspace
-    // MODIFIES: this, all fields (panels and buttons)
+    // MODIFIES: this
     // EFFECTS: initializes all of the sub-panels
     private void initializePanels(String[] funcNames) {
         framePanel = new JPanel();
@@ -56,7 +56,7 @@ public class RemoveFunctionWindow extends JFrame implements ActionListener {
     }
 
     // REQUIRES: funcNames are function names in the active workspace
-    // MODIFIES: this, comboBoxPanel, comboBox, framePanel
+    // MODIFIES: this
     // EFFECTS: sets up the combo box panel, which allows selection of the functions in the workspace
     private void initializeComboBoxPanel(String[] funcNames) {
         comboBoxPanel = new JPanel();
@@ -68,7 +68,7 @@ public class RemoveFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(comboBoxPanel);
     }
 
-    // MODIFIES: this, removeButtonPanel, removeButton, framePanel
+    // MODIFIES: this
     // EFFECTS: sets up the panel containing the button to remove selected function
     private void initializeRemoveButtonPanel() {
         removeButtonPanel = new JPanel();
@@ -80,7 +80,7 @@ public class RemoveFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(removeButtonPanel);
     }
 
-    // MODIFIES: this, confirmPanel, yesButton, noButton, framePanel
+    // MODIFIES: this
     // EFFECTS: sets up the panel containing confirmation (yes/no) buttons for removing function
     private void initializeConfirmPanel() {
         confirmPanel = new JPanel();
@@ -96,7 +96,7 @@ public class RemoveFunctionWindow extends JFrame implements ActionListener {
     }
 
     @Override
-    // MODIFIES: this, removeButtonPanel, confirmPanel, workspace, funcListPanel, canvasPanel, FunctionLabel
+    // MODIFIES: this
     // EFFECTS: replaces removeButton with confirmation buttons upon click, removes function on
     //          click of yesButton, or does nothing on click of noButton
     public void actionPerformed(ActionEvent e) {

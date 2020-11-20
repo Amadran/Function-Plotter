@@ -36,7 +36,7 @@ public class FunctionPlotterGUI extends JFrame {
         setVisible(true);
     }
 
-    // MODIFIES: this, canvasPanel, funcListPanel, buttonPanel, optionsPanel
+    // MODIFIES: this
     // EFFECTS: initializes the all the sub-panels
     private void initializePanels() {
         //initialize each panel
@@ -57,7 +57,7 @@ public class FunctionPlotterGUI extends JFrame {
     }
 
     // REQUIRES: name must not be an empty string, same REQUIRES as Function constructor
-    // MODIFIES: this, workspace, funcListPanel, canvasPanel
+    // MODIFIES: this
     // EFFECTS: adds a Function to the workspace and the funcListPanel
     public void addFunction(String name, String type, HashMap<String, Double> constants, List<Double> domain) {
         workspace.addFunction(new Function(type, constants, domain), name);
@@ -66,7 +66,7 @@ public class FunctionPlotterGUI extends JFrame {
     }
 
     // REQUIRES: "name" Function object exists in FunctionListPanel.funcLabels
-    // MODIFIES: this, workspace, funcListPanel, canvasPanel, FunctionLabel
+    // MODIFIES: this
     // EFFECTS: removes function from workspace and funcListPanel
     public void removeFunction(String name) {
         workspace.removeFunction(name);
@@ -74,13 +74,13 @@ public class FunctionPlotterGUI extends JFrame {
         canvasPanel.repaint();
     }
 
-    // MODIFIES: this, fileHandler, JsonWriter
+    // MODIFIES: this
     // EFFECTS: saves the current workspace to file
     public void saveWorkspace() {
         fileHandler.saveFile(workspace);
     }
 
-    // MODIFIES: this, fileHandler, workspace, JsonReader, funcListPanel, canvasPanel
+    // MODIFIES: this
     // EFFECTS: loads a workspace from file
     public void loadWorkspace() {
         int option = fileHandler.loadFile(workspace);
@@ -103,7 +103,6 @@ public class FunctionPlotterGUI extends JFrame {
         for (String name : functions.keySet()) {
             funcNames.add(name);
         }
-
         return funcNames.toArray(new String[] {});
     }
 }

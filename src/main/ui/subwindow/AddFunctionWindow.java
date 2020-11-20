@@ -45,11 +45,9 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         mainFrame = main;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new FlowLayout());
-
         initNumberOfConstantsForType();
         initializePanels();
         add(framePanel);
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -77,7 +75,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         return max;
     }
 
-    // MODIFIES: this, framePanel, namePanel, typePanel, domainPanel, constantsPanel, submitPanel
+    // MODIFIES: this
     // EFFECTS: initializes all of the sub-panels of this sub-window
     private void initializePanels() {
         framePanel = new JPanel();
@@ -89,12 +87,12 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         initializeSubmitPanel();
     }
 
-    // MODIFIES: this, namePanel, framePanel
+    // MODIFIES: this
     // EFFECTS: initializes the panel that handles specifying the name for the function
     private void initializeNamePanel() {
         namePanel = new JPanel();
         namePanel.add(new JLabel("Function Name:"));
-        JTextField textField = new JTextField("my linear function");
+        JTextField textField = new JTextField();
         textField.setPreferredSize(new Dimension(SUB_FIELD_WIDTH, SUB_FIELD_HEIGHT));
 
         namePanel.add(textField);
@@ -104,7 +102,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(namePanel);
     }
 
-    // MODIFIES: this, typePanel, typePanelComboBox, framePanel
+    // MODIFIES: this
     // EFFECTS: initializes the panel that handles specifying the type for the function
     private void initializeTypePanel() {
         typePanel = new JPanel();
@@ -120,7 +118,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(typePanel);
     }
 
-    // MODIFIES: this, domainPanel, framePanel
+    // MODIFIES: this
     // EFFECTS: initializes the panel that handles specifying the domain for the function
     private void initializeDomainPanel() {
         domainPanel = new JPanel();
@@ -140,7 +138,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         framePanel.add(domainPanel);
     }
 
-    // MODIFIES: this, constantsLabel, constantsPanel, framePanel
+    // MODIFIES: this
     // EFFECTS: initializes the panel that handles specifying the constants for the function
     private void initializeConstantsPanel() {
         int maxNumOfConstants = hashMapMaxValue(NUMBER_OF_CONSTANTS_FOR_TYPE);
@@ -152,6 +150,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
         //constantsPanel.setLayout(new FlowLayout());
         constantsPanel.add(constantsLabel);
 
+        // create all possible constantsField labels and text fields
         for (int i = 0; i < maxNumOfConstants; i++) {
             JPanel constantsField = new JPanel();
             JLabel label = new JLabel(Function.CONSTANT_NAMES[i] + ":");
@@ -163,12 +162,13 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
             constantsPanel.add(constantsField);
         }
 
+        // hide constant fields based on the default function type selection
         hideConstantFields(NUMBER_OF_CONSTANTS_FOR_TYPE.get(typePanelComboBox.getSelectedItem().toString()));
         constantsPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         framePanel.add(constantsPanel);
     }
 
-    // MODIFIES: this, submitPanel, submitButton, framePanel
+    // MODIFIES: this
     // EFFECTS: initializes the panel that contains the submit button
     private void initializeSubmitPanel() {
         submitPanel = new JPanel();
@@ -180,7 +180,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
     }
 
     // REQUIRES: numConstants is one of the values in NUMBER_OF_CONSTANTS_FOR_TYPE
-    // MODIFIES: this, constantsPanel
+    // MODIFIES: this
     // EFFECTS: hides all the constant-specifying fields numbered after numConstants
     private void hideConstantFields(int numConstants) {
         int maxNumConstants = hashMapMaxValue(NUMBER_OF_CONSTANTS_FOR_TYPE);
@@ -212,15 +212,17 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
     }
 
     @Override
-    // MODIFIES: this, constantsPanel, workspace, funcListPanel, canvasPanel, FunctionLabel
+    // MODIFIES: this
     // EFFECTS: hides extra constants fields for typePanelComboBox on type change, and submits the
     //          information on click of submitButton for a new function to be added
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == typePanelComboBox) {
+            // hide constants fields based on currently selected function type
             String selectedItem = typePanelComboBox.getSelectedItem().toString();
             int numToHide = NUMBER_OF_CONSTANTS_FOR_TYPE.get(selectedItem);
             hideConstantFields(numToHide);
         } else if (e.getSource() == submitButton) {
+            // grab all relevant information (except for constants) from the window to make a function
             JTextField nameField = (JTextField) namePanel.getComponent(1);
             String type = typePanelComboBox.getSelectedItem().toString();
             List<Double> domain = new ArrayList<>();
@@ -229,6 +231,7 @@ public class AddFunctionWindow extends JFrame implements ActionListener {
             domain.add(Double.parseDouble(leftField.getText()));
             domain.add(Double.parseDouble(rightField.getText()));
 
+            // add new function to the main JFrame (FunctionPlotterGUI)
             int numConstants = NUMBER_OF_CONSTANTS_FOR_TYPE.get(typePanelComboBox.getSelectedItem().toString());
             mainFrame.addFunction(nameField.getText(), type, getConstants(numConstants), domain);
             dispose();

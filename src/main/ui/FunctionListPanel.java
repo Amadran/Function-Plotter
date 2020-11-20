@@ -35,7 +35,7 @@ public class FunctionListPanel extends JScrollPane {
         //TEST
     }
 
-    // MODIFIES: this, internalPanel
+    // MODIFIES: this
     // EFFECTS: sets up the internal panel contained by FunctionListPanel (which is a JScrollPane)
     private void setupInternalPanel() {
         internalPanel = new JPanel();
@@ -47,7 +47,7 @@ public class FunctionListPanel extends JScrollPane {
     }
 
     // REQUIRES: name must not be an empty string, same REQUIRES as Function constructor
-    // MODIFIES: this, FunctionLabel, funcLabels, internalPanel
+    // MODIFIES: this
     // EFFECTS: creates new FunctionLabel with a name, function type, domain, and constants
     public void addNewFuncLabel(String name, String type, List<Double> domain,
                                 HashMap<String, Double> constants) {
@@ -58,7 +58,7 @@ public class FunctionListPanel extends JScrollPane {
     }
 
     // REQUIRES: name must not be an empty string
-    // MODIFIES: this, FunctionLabel, funcLabels, internalPanel
+    // MODIFIES: this
     // EFFECTS: creates new FunctionLabel with a name and function object directly
     public void addNewFuncLabel(String name, Function function) {
         FunctionLabel funcLabel = new FunctionLabel(name, function.getFunctionType(),
@@ -69,7 +69,7 @@ public class FunctionListPanel extends JScrollPane {
     }
 
     // REQUIRES: "name" Function object exists in funcLabels
-    // MODIFIES: this, FunctionLabel, funcLabels, internalPanel
+    // MODIFIES: this
     // EFFECTS: removes the function label from this
     public void removeFuncLabel(String name) {
         FunctionLabel labelToRemove = null;

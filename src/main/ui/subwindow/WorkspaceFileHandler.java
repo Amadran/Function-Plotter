@@ -20,7 +20,6 @@ import java.util.HashMap;
 public class WorkspaceFileHandler extends JFileChooser {
     private FunctionPlotterGUI mainFrame;
 
-
     // REQUIRES: main is the main GUI JFrame (FunctionPlotterGUI)
     // EFFECTS: sets mainFrame and other inherited properties
     public WorkspaceFileHandler(FunctionPlotterGUI main) {
@@ -29,7 +28,7 @@ public class WorkspaceFileHandler extends JFileChooser {
     }
 
     // REQUIRES: workspace is the active workspace of the main JFrame
-    // MODIFIES: this, writer
+    // MODIFIES: this
     // EFFECTS: saves the current workspace to a json file
     public void saveFile(Workspace workspace) {
         JsonWriter writer;
@@ -51,7 +50,7 @@ public class WorkspaceFileHandler extends JFileChooser {
     }
 
     // REQUIRES: workspace is the active workspace of the main JFrame
-    // MODIFIES: this, reader, workspace
+    // MODIFIES: this, workspace
     // EFFECTS: loads a workspace from a json file into "workspace"
     public int loadFile(Workspace workspace) {
         JsonReader reader;
@@ -66,6 +65,7 @@ public class WorkspaceFileHandler extends JFileChooser {
                 tempWorkspace = reader.read();
                 System.out.println("File '" + file.getAbsolutePath() + "' loaded");
 
+                // add functions from tempWorkspace into workspace
                 HashMap<String, Function> functions = tempWorkspace.getFunctionList();
                 for (String funcName : functions.keySet()) {
                     workspace.addFunction(functions.get(funcName), funcName);
