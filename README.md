@@ -31,3 +31,82 @@ a function in the workspace with a particular input
 - As a user, I want to be able to save a workspace to a file
 - As a user, I want to be able to load a workspace back up
 from a file
+
+## Phase 4: Task 2
+- ##### Used the Map interface:
+    - Class: Function
+        - fields "constants" and "NUMBER_OF_CONSTANTS_FOR_TYPE"
+        are a HashMap
+        - methods:
+            - Function()
+            - initNumberOfConstantsForType()
+            - getConstants()
+            - all evalX() methods
+            - toJson()
+            - constantsToJson()
+    - Class: Workspace
+        - field "functionList" is a HashMap
+        - methods:
+            - Workspace()
+            - addFunction()
+            - removeFunction()
+            - getFunction()
+            - getFunctionList()
+            - getFunctionListLength()
+            - toJson()
+    - Class: JsonReader
+        - methods:
+            - populateWorkspace()
+            - populateConstantsAndDomain()
+    - Class: FunctionPlotterGUI
+        - methods:
+            - addFunction()
+            - loadWorkspace()
+            - getFunctionNames()
+    - Class: CanvasPanel
+        - methods:
+            - drawWorkspace()
+    - Class: FunctionListPanel
+        - methods:
+            - addNewFuncLabel()
+    - Class: WorkspaceFileHandler
+        - methods:
+            - loadFile()
+    - Class: AddFunctionWindow
+        - field "NUMBER_OF_CONSTANTS_FOR_TYPE" is a HashMap
+        - methods:
+            - initNumberOfConstantsForType()
+            - hashMapMaxValue()
+            - initializeConstantsPanel()
+            - hideConstantFields()
+            - getConstants()
+            - actionPerformed()
+            
+- ##### Bi-directional Association:
+    - FunctionPlotterGUI ---- ButtonPanel
+        - methods:
+            - FunctionPlotterGUI.initializePanels()
+                - calls new ButtonPanel(this)
+            - ButtonPanel.actionPerformed()
+                - calls AddFunctionWindow()
+                - calls AddFunctionWindow.actionPerformed()
+                - calls FunctionPlotterGUI.addFunction()
+            - ButtonPanel.actionPerformed()
+                - calls RemoveFunctionWindow()
+                - calls RemoveFunctionWindow.actionPerformed()
+                - calls FunctionPlotterGUI.removeFunction()
+            - ButtonPanel.actionPerformed()
+                - calls FunctionPlotterGUI.saveWorkspace()
+            - ButtonPanel.actionPerformed()
+                - calls FunctionPlotterGUI.loadWorkspace()
+    - FunctionPlotterGUI ---- WorkspaceFileHandler
+        - methods:
+            - FunctionPlotterGUI()
+                - calls WorkspaceFileHandler(this)
+            - FunctionPlotterGUI.saveWorkspace()
+                - calls WorkspaceFileHandler.saveFile()
+                - calls JFileChooser.showSaveDialog(this) (Java library)
+            - FunctionPlotterGUI.loadWorkspace()
+                - calls WorkspaceFileHandler.loadFile()
+                - calls JFileChooser.showOpenDialog(this) (Java library)
+    
