@@ -82,7 +82,7 @@ from a file
             - getConstants()
             - actionPerformed()
             
-- ##### Bi-directional Association:
+- ##### Used a bi-directional association:
     - FunctionPlotterGUI ---- ButtonPanel
         - methods:
             - FunctionPlotterGUI.initializePanels()
@@ -109,4 +109,18 @@ from a file
             - FunctionPlotterGUI.loadWorkspace()
                 - calls WorkspaceFileHandler.loadFile()
                 - calls JFileChooser.showOpenDialog(this) (Java library)
-    
+  
+## Phase 4: Task 3
+- There is more coupling than probably necessary between FunctionPlotterGUI,
+CanvasPanel, and Workspace; this could be improved by removing the association
+between CanvasPanel and Workspace directly, and instead pass the relevant
+Workspace object from FunctionPlotterGUI to CanvasPanel when needed
+- From the diagram it's not clear how JsonReader and JsonWriter is associated
+with the rest of the program (they're both a dependency of WorkspaceFileHandler,
+but not a direct association); this could be improved by setting a JsonReader
+and JsonWriter object directly as fields of WorkspaceFileHandler
+- WorkspaceFileHandler is not that cohesive, as it consists both of GUI
+functionality and saving/loading behaviour; this could be improved by splitting
+it up into at least two separate classes
+- It would be helpful to indicate which classes are "Writable" (and possibly
+"Readable") by having them implement interfaces of the same names
